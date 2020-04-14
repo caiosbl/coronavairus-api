@@ -9,6 +9,34 @@ const newsSort = (a, b) => {
     return -1;
 }
 
+
+
+exports.getLastNews = (req, res) => {
+
+    const query = queryString.parse(req._parsedUrl.query);
+
+    // Number of News to return
+    let size = query.size;
+    if (isNaN(size)) return res.status(400).json({ message: "Size must be a valid number" });
+    size = Math.abs(size);
+
+
+    News.find(function (error, news) {
+
+        if (!error && news !== null) {
+
+            res.json({ content: news.sort(newsSort).slice(size * -1).map(element => element.getInfo()) });
+
+
+        } else {
+
+            res.status(400).json({ message: "News not founded" });;
+
+        }
+    });
+
+}
+
 exports.getAllNews = (req, res) => {
 
 
