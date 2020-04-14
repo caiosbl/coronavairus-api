@@ -2,6 +2,7 @@ const News = require('../model/News');
 const queryString = require('query-string');
 const Api = require('../utils/apis');
 const ApiNews = Api.ApiNews;
+const lzwCompress = require('lzwcompress');
 
 
 const newsSort = (a, b) => {
@@ -25,7 +26,38 @@ exports.getLastNews = (req, res) => {
 
         if (!error && news !== null) {
 
-            res.json({ content: news.sort(newsSort).slice(size * -1).map(element => element.getInfo()) });
+            const data = news.sort(newsSort).slice(size * -1).map(element => element.getInfo()) ;
+
+            res.json({ content: data});
+
+
+        } else {
+
+            res.status(400).json({ message: "News not founded" });;
+
+        }
+    });
+
+}
+
+exports.getLastNewsCompressed = (req, res) => {
+
+    const query = queryString.parse(req._parsedUrl.query);
+
+    // Number of News to return
+    let size = query.size;
+    if (isNaN(size)) return res.status(400).json({ message: "Size must be a valid number" });
+    size = Math.abs(size);
+
+
+    News.find(function (error, news) {
+
+        if (!error && news !== null) {
+
+            const data = news.sort(newsSort).slice(size * -1).map(element => element.getInfo()) ;
+            var compressedData = lzwCompress.pack(data);
+
+            res.json({ content: compressedData});
 
 
         } else {
