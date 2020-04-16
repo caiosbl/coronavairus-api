@@ -30,6 +30,26 @@ exports.getAllStates = (req, res) => {
 
 }
 
+exports.getStateByUf = (req, res) => {
+
+    const uf = req.params.uf;
+
+    const queryDb = State.findOne({uf: uf});
+    
+    queryDb.exec(function (error, state) {
+
+        if (!error && state !== null) {
+            res.json(state.getInfo());
+
+        } else {
+
+            res.status(400).json({ message: "Fail to get state" });;
+
+        }
+    });
+
+}
+
 
 exports.initStates = () => {
 
