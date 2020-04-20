@@ -31,8 +31,5 @@
     "readme-md-generator": "^1.0.0",
     "tensorflow": "^0.7.0"
   },
-  "engines": {
-    "npm": ">=6.7.0",
-    "node": ">=11.15.0"
-  }
+ 
 }
