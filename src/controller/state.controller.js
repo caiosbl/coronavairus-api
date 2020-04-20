@@ -8,16 +8,14 @@ const queryString = require('query-string');
 
 exports.getAllStates = (req, res) => {
 
-    State.find(function (error, state) {
+    const queryDb = State.find().sort({"data.date": -1});
+    
+    queryDb.exec((error, state) => {
 
         if (!error && state !== null) {
 
             res.json({
-                content: state.sort((a, b) => {
-                    if (b.data.date > a.data.date) return 1;
-                    return -1;
-                })
-                    .map(element => element.getInfo())
+                content: state.map(element => element.getInfo())
             });
 
 
@@ -36,7 +34,7 @@ exports.getStateByUf = (req, res) => {
 
     const queryDb = State.findOne({uf: uf});
     
-    queryDb.exec(function (error, state) {
+    queryDb.exec((error, state) => {
 
         if (!error && state !== null) {
             res.json(state.getInfo());

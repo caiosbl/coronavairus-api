@@ -14,3 +14,6 @@ exports.ApiBrazilCSV = Axios.create({
     baseURL: '"https://mobileapps.saude.gov.br/esus-vepi/files/unAFkcaNDeXajurGB7LChj8SgQYS2ptm/4101ebf78c503bf35ecba5545d236c76_Download_COVID19_20200410.csv"',
 });
 
+exports.ApiBrazilByDay = Axios.create({
+    baseURL: 'https://api.covid19api.com/live/country/brazil'
+})

@@ -14,6 +14,7 @@
     "url": "git+https://github.com/caiosbl/coronavairus-api.git"
   },
   "dependencies": {
+    "@tensorflow/tfjs": "^1.7.2",
     "axios": "^0.19.2",
     "cookie-parser": "~1.4.4",
     "cors": "^2.8.5",
@@ -27,7 +28,8 @@
     "morgan": "~1.9.1",
     "pug": "2.0.0-beta11",
     "query-string": "^6.11.1",
-    "readme-md-generator": "^1.0.0"
+    "readme-md-generator": "^1.0.0",
+    "tensorflow": "^0.7.0"
   },
   "engines": {
     "npm": ">=6.7.0",

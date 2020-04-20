@@ -20,13 +20,13 @@ exports.getLastNews = (req, res) => {
     if (isNaN(size)) return res.status(400).json({ message: "Size must be a valid number" });
     size = Math.abs(size);
 
-    const queryDb = News.find().limit(size);
+    const queryDb = News.find().sort({date: -1}).limit(size);
 
     queryDb.exec(function (error, news) {
 
         if (!error && news !== null) {
 
-            res.json({ content: news.sort(newsSort).slice(size * -1).map(element => element.getInfo()) });
+            res.json({ content: news.map(element => element.getInfo()) });
 
 
         } else {
@@ -41,11 +41,13 @@ exports.getLastNews = (req, res) => {
 exports.getAllNews = (req, res) => {
 
 
-    News.find(function (error, news) {
+   const queryDb = News.find().sort({date: -1});
+
+   queryDb.exec((error, news) => {
 
         if (!error && news !== null) {
 
-            res.json({ content: news.sort(newsSort).map(element => element.getInfo()) });
+            res.json({ content: news.map(element => element.getInfo()) });
 
 
         } else {
