@@ -7,7 +7,7 @@ const updateNews = NewsController.updateNews;
 const updateBrazilData = BrazilController.update;
 
 
-const UPDATE_NEWS_INTERVAL = process.env.UPDATE_INTERVAL;
+const UPDATE_NEWS_INTERVAL = process.env.UPDATE_NEWS_INTERVAL;
 const UPDATE_INTERVAL = process.env.UPDATE_INTERVAL;
 
 
