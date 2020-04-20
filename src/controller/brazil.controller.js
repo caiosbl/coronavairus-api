@@ -102,13 +102,13 @@ exports.getTimeSeries = (req, res) => {
 
 exports.getLastData = (req, res) => {
 
-    const queryDb = Brazil.find().limit(1);
+    const queryDb = Brazil.findOne().sort({date: -1});
 
     queryDb.exec(function (error, brazil) {
 
         if (!error && brazil !== null) {
 
-            res.json({ content: brazil.map(element => element.getInfo()) });
+            res.json({ content: brazil.getInfo() });
 
 
         } else {

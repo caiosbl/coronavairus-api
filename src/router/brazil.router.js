@@ -5,6 +5,7 @@ const brazilController = require('../controller/brazil.controller');
 
 
 router.get('/', brazilController.getTimeSeries);
+router.get('/last', brazilController.getLastData);
 
 
 
