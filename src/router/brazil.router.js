@@ -8,6 +8,5 @@ router.get('/', brazilController.getTimeSeries);
 router.get('/last', brazilController.getLastData);
 
 
-
 module.exports = router;
 
