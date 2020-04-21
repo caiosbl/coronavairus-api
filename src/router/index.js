@@ -3,6 +3,8 @@ var router = express.Router();
 const stateRouter = require('./state.router');
 const newsRouter = require('./news.router');
 const brazilRouter = require('./brazil.router');
+const worldRouter = require('./world.router');
+
 
 
 router.get('/', function(req, res, next) {
@@ -12,6 +14,7 @@ router.get('/', function(req, res, next) {
 router.use('/state', stateRouter);
 router.use('/news', newsRouter);
 router.use('/brazil', brazilRouter);
+router.use('/world', worldRouter);
 
 
 

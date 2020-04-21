@@ -1,1 +1,1 @@
-exports.toNumber = (string) => Number(string.replace(",",""));
+exports.toNumber = (string) => Number(string.split(",").join(""));

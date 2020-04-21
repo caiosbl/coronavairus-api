@@ -72,7 +72,6 @@ exports.update = async () => {
         }
     })
 
-
 }
 
 
