@@ -14,9 +14,9 @@ const UPDATE_INTERVAL = process.env.UPDATE_INTERVAL;
 
 
 updateBrazilLive();
-updateWorldLive();
-updateNews();
-updateStates();
+//updateWorldLive();
+//updateNews();
+//updateStates();
 
 
 setInterval(updateNews, UPDATE_NEWS_INTERVAL);

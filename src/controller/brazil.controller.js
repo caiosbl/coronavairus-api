@@ -84,7 +84,9 @@ exports.updateLive = async () => {
 
 
     try {
-        const reqData = req.data.latest_stat_by_country[0];
+        const reqData = req.data.latest_stat_by_country[0][0];
+
+        console.log(reqData)
 
         const data = {
             totalCases: ToNumber(reqData.total_cases),
