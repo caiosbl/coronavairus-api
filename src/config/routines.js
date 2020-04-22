@@ -22,3 +22,5 @@ updateWorldLive();
 setInterval(updateNews, UPDATE_NEWS_INTERVAL);
 setInterval(updateStates, UPDATE_INTERVAL);
 setInterval(updateBrazilLive, UPDATE_INTERVAL);
+setInterval(updateWorldLive, UPDATE_INTERVAL);
+
