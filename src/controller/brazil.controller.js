@@ -4,6 +4,7 @@ const ApiBrazilByDay = Apis.ApiBrazilByDay;
 const ApiCoronaLive = Apis.ApiCoronaLive;
 const Utils = require('../utils/utils');
 const ToNumber = Utils.toNumber;
+const { parse } = require('json2csv');
 
 const queryString = require('query-string');
 
@@ -84,9 +85,8 @@ exports.updateLive = async () => {
 
 
     try {
-        const reqData = req.data.latest_stat_by_country[0][0];
+        const reqData = req.data.latest_stat_by_country[0];
 
-       
 
         const data = {
             totalCases: ToNumber(reqData.total_cases),
@@ -165,6 +165,33 @@ exports.getTimeSeries = (req, res) => {
                 content: brazil.map(element => element.getInfo())
             });
 
+
+        } else {
+
+            res.status(400).json({ message: "Fail to get Brazil Timeseries" });;
+
+        }
+    });
+
+}
+
+exports.getTimeSeriesCSV = (req, res) => {
+
+    const fields = ["totalCases", "newCases", "activeCases", "totalDeaths", "newDeaths", "totalRecovered", "seriousCritical", "date"];
+    const opts = { fields };
+
+    const queryBd = Brazil.find().sort({ date: 1 });
+
+    queryBd.exec((error, brazil) => {
+
+        if (!error && brazil !== null) {
+
+            const data = brazil.map(element => element.getInfo());
+
+            const csv = parse(data, opts);
+            res.attachment('brazil-covid-timeseries.csv');
+            res.status(200).send(csv);
+      
 
         } else {
 

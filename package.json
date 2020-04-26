@@ -23,13 +23,12 @@
     "dotenv": "^8.2.0",
     "express": "~4.16.1",
     "http-errors": "~1.6.3",
+    "json2csv": "^5.0.0",
     "lzwcompress": "^0.5.14",
     "mongoose": "^5.9.7",
     "morgan": "~1.9.1",
     "pug": "2.0.0-beta11",
     "query-string": "^6.11.1",
     "readme-md-generator": "^1.0.0"
-
   }
- 
 }
