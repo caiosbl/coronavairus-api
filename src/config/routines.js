@@ -8,6 +8,7 @@ const updateStates = StateController.updateStates;
 const updateNews = NewsController.updateNews;
 const updateBrazilLive = BrazilController.updateLive;
 const updateWorldLive = WorldController.updateLive;
+const updateBrazil = BrazilController.update;
 
 const UPDATE_NEWS_INTERVAL = process.env.UPDATE_NEWS_INTERVAL;
 const UPDATE_INTERVAL = process.env.UPDATE_INTERVAL;
@@ -15,8 +16,8 @@ const UPDATE_INTERVAL = process.env.UPDATE_INTERVAL;
 
 updateBrazilLive();
 updateWorldLive();
-//updateNews();
-//updateStates();
+updateNews();
+updateStates();
 
 
 setInterval(updateNews, UPDATE_NEWS_INTERVAL);

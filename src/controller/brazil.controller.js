@@ -79,27 +79,29 @@ exports.update = async () => {
 
 exports.updateLive = async () => {
 
-    const req = await ApiCoronaLive.get("/latest_stat_by_country.php", {
-        params: { country: "Brazil" }
+    const req = await ApiCoronaLive.get("/cases_by_country.php", {
     });
 
 
     try {
-        const reqData = req.data.latest_stat_by_country[0];
+        const reqData = req.data.countries_stat.filter(country => country.country_name === 'Brazil')[0];
+        const reqTime = req.data.statistic_taken_at;
 
 
         const data = {
-            totalCases: ToNumber(reqData.total_cases),
+            totalCases: ToNumber(reqData.cases),
             newCases: ToNumber(reqData.new_cases),
             activeCases: ToNumber(reqData.active_cases),
-            totalDeaths: ToNumber(reqData.total_deaths),
+            totalDeaths: ToNumber(reqData.deaths),
             newDeaths: ToNumber(reqData.new_deaths),
             totalRecovered: ToNumber(reqData.total_recovered),
             seriousCritical: ToNumber(reqData.serious_critical),
-            date: `${reqData.record_date.slice(0, 10)}T00:00:00.000+00:00`
+            date: `${reqTime.slice(0, 10)}T00:00:00.000+00:00`
         };
 
         let newBrazilData = new Brazil();
+
+        console.log(data)
         newBrazilData.createBrazilData(data);
 
         newBrazilData.save(async (error) => {
@@ -162,7 +164,7 @@ exports.getTimeSeries = (req, res) => {
         if (!error && brazil !== null) {
 
             res.json({
-                content: brazil.map(element => element.getInfo())
+                content: brazil.slice(0, brazil.length - 1).map(element => element.getInfo())
             });
 
 
@@ -186,7 +188,7 @@ exports.getTimeSeriesCSV = (req, res) => {
 
         if (!error && brazil !== null) {
 
-            const data = brazil.map(element => element.getInfo());
+            const data = brazil.slice(0,brazil.length - 1).map(element => element.getInfo());
 
             const csv = parse(data, opts);
             res.attachment('brazil-covid-timeseries.csv');
