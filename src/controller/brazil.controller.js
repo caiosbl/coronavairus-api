@@ -1,5 +1,6 @@
 const Brazil = require('../model/Brazil');
 const Apis = require('../utils/apis');
+const ApiBrazil = Apis.ApiBrazil;
 const ApiBrazilByDay = Apis.ApiBrazilByDay;
 const ApiCoronaLive = Apis.ApiCoronaLive;
 const Utils = require('../utils/utils');
@@ -79,21 +80,25 @@ exports.update = async () => {
 
 exports.updateLive = async () => {
 
-    const req = await ApiCoronaLive.get("/cases_by_country.php", {
-    });
+    const req = await ApiCoronaLive.get("/cases_by_country.php");
+
+    const reqBrazil = await ApiBrazil.get("PortalAcumulo");
 
 
     try {
         const reqData = req.data.countries_stat.filter(country => country.country_name === 'Brazil')[0];
         const reqTime = req.data.statistic_taken_at;
+        const reqDataMinSaude = reqBrazil.data.results;
+
+
 
 
         const data = {
-            totalCases: ToNumber(reqData.cases),
-            newCases: ToNumber(reqData.new_cases),
+            totalCases: reqDataMinSaude.slice(-1)[0]['qtd_confirmado'],
+            newCases: reqDataMinSaude.slice(-1)[0]['qtd_confirmado'] - reqDataMinSaude.slice(-2)[0]['qtd_confirmado'],
             activeCases: ToNumber(reqData.active_cases),
-            totalDeaths: ToNumber(reqData.deaths),
-            newDeaths: ToNumber(reqData.new_deaths),
+            totalDeaths: reqDataMinSaude.slice(-1)[0]['qtd_obito'],
+            newDeaths:reqDataMinSaude.slice(-1)[0]['qtd_obito'] - reqDataMinSaude.slice(-2)[0]['qtd_obito'],
             totalRecovered: ToNumber(reqData.total_recovered),
             seriousCritical: ToNumber(reqData.serious_critical),
             date: `${reqTime.slice(0, 10)}T00:00:00.000+00:00`
@@ -101,7 +106,7 @@ exports.updateLive = async () => {
 
         let newBrazilData = new Brazil();
 
-        console.log(data)
+       
         newBrazilData.createBrazilData(data);
 
         newBrazilData.save(async (error) => {

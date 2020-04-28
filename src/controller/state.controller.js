@@ -51,7 +51,7 @@ exports.getStateByUf = (req, res) => {
 
 exports.initStates = () => {
 
-    ApiBrazil.get("").then(res => {
+    ApiBrazil.get("PortalMapa").then(res => {
 
         console.log(`Starting to Saving States - ${new Date()}`)
 
@@ -89,7 +89,7 @@ exports.initStates = () => {
 
 exports.updateStates = async () => {
 
-    ApiBrazil.get().then(res => {
+    ApiBrazil.get("PortalMapa").then(res => {
 
         console.log(`Starting to Update States - ${new Date()}`)
 
