@@ -169,7 +169,7 @@ exports.getTimeSeries = (req, res) => {
         if (!error && brazil !== null) {
 
             res.json({
-                content: brazil.slice(0, brazil.length - 1).map(element => element.getInfo())
+                content: brazil.map(element => element.getInfo())
             });
 
 
