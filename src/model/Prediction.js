@@ -11,35 +11,34 @@ var prediction = new Schema({
     casesLowPrediction: {
         type: Number,
         required: true,
-        unique: true
+  
     },
     casesMeanPrediction: {
         type: Number,
         required: true,
-        unique: true
+    
     },
     casesHighPrediction: {
         type: Number,
         required: true,
-        unique: true
+    
     },
 
     deathsLowPrediction: {
         type: Number,
         required: true,
-        unique: true
+       
     },
 
     deathsMeanPrediction: {
         type: Number,
         required: true,
-        unique: true
+     
     },
 
     deathsHighPrediction: {
         type: Number,
         required: true,
-        unique: true
     },
 
 

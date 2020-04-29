@@ -193,7 +193,7 @@ exports.getTimeSeriesCSV = (req, res) => {
 
         if (!error && brazil !== null) {
 
-            const data = brazil.slice(0,brazil.length - 1).map(element => element.getInfo());
+            const data = brazil.slice(0,brazil.length).map(element => element.getInfo());
 
             const csv = parse(data, opts);
             res.attachment('brazil-covid-timeseries.csv');
