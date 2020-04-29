@@ -18,6 +18,8 @@
 
 ### ✨ [Demo](https://coronavairus.herokuapp.com/)
 
+## [Predictions Module] (https://github.com/caiosbl/covid-brazil-predictions)
+
 ## Prerequisites
 
 - npm >=6.7.0
