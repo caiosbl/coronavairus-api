@@ -39,10 +39,18 @@ npm start
 
 ## Author
 
+# Api
 👤 **Caio Sanches**
 
 * Github: [@caiosbl](https://github.com/caiosbl)
 * LinkedIn: [@caiobdelira](https://linkedin.com/in/caiobdelira)
+
+# Predict Model
+👤 **João Henrique**
+
+* Github: [@joaohenriquedss](https://github.com/joaohenriquedss)
+* LinkedIn: [@joão-henrique-4557211a6](https://www.linkedin.com/in/jo%C3%A3o-henrique-4557211a6)
+
 
 ## 🤝 Contributing
 
