@@ -106,13 +106,13 @@ exports.getAll = (req, res) => {
 
 exports.getLastData = (req, res) => {
 
-    const queryDb = Prediction.find().limit(7);
+    const queryDb = Prediction.find().sort({ date: -1 }).limit(7);
 
     queryDb.exec(function (error, predictions) {
 
         if (!error && predictions !== null) {
 
-            res.json({ content: predictions.map(prediction => prediction.getInfo()) });
+            res.json({ content: predictions.reverse().map(prediction => prediction.getInfo()) });
 
 
         } else {
