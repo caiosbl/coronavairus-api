@@ -26,3 +26,7 @@ exports.ApiCoronaLive = Axios.create({
 exports.ApiBrazilByDay = Axios.create({
     baseURL: 'https://api.covid19api.com/live/country/brazil'
 })
+
+exports.ApiPredictions = Axios.create({
+    baseURL: 'https://covid-brazil-predictions.herokuapp.com/'
+})
