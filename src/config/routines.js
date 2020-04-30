@@ -12,6 +12,7 @@ const updateWorldLive = WorldController.updateLive;
 const updatePredictions = PredictionController.updateLive;
 
 const UPDATE_NEWS_INTERVAL = process.env.UPDATE_NEWS_INTERVAL;
+const UPDATE_PREDICTIONS_INTERVAL = process.env.UPDATE__PREDICTIONS_INTERVAL;
 const UPDATE_INTERVAL = process.env.UPDATE_INTERVAL;
 
 
@@ -26,4 +27,5 @@ setInterval(updateNews, UPDATE_NEWS_INTERVAL);
 setInterval(updateStates, UPDATE_INTERVAL);
 setInterval(updateBrazilLive, UPDATE_INTERVAL);
 setInterval(updateWorldLive, UPDATE_INTERVAL);
+setInterval(updatePredictions, UPDATE_PREDICTIONS_INTERVAL);
 
