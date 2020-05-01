@@ -34,3 +34,7 @@ exports.ApiBrazilByDay = Axios.create({
 exports.ApiPredictions = Axios.create({
     baseURL: 'https://covid-brazil-predictions.herokuapp.com/'
 })
+
+exports.ApiTests = Axios.create({
+    baseURL: 'https://covid-insumos.saude.gov.br/paineis/insumos/mapas/teste.php'
+})

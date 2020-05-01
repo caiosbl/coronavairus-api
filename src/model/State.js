@@ -20,10 +20,16 @@ var State = new Schema({
         required: false,
         unique: true
     },
-    
-    data: {},
 
-    latest: {}
+    data: {
+        type: Object,
+        required: true
+    },
+
+    latest: {
+        type: Object,
+        required: true
+    }
 
 
 }, { autoIndex: true, });
@@ -44,17 +50,17 @@ State.methods.createState = function createState(req) {
     let uid = req.uid;
     let data = req.data;
 
-  
-   this.name = name;
-   this.uf = uf;
-   this.uid = uid;
-   this.data = data;
-   
+
+    this.name = name;
+    this.uf = uf;
+    this.uid = uid;
+    this.data = data;
+
 }
 
 State.methods.getInfo = function getInfo() {
     return {
-        name: this.name, 
+        name: this.name,
         uf: this.uf,
         uid: this.uid,
         data: this.data,
@@ -77,7 +83,7 @@ State.methods.setData = function setData(newData) {
 };
 
 State.methods.removeKey = function removeKey(key) {
-   delete this.data[key];
+    delete this.data[key];
 };
 
 
