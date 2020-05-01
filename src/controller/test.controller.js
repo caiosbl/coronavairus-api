@@ -1,9 +1,6 @@
 const Test = require('../model/Test');
 const Apis = require('../utils/apis');
 const ApiTests = Apis.ApiTests;
-var html2json = require('html2json').html2json;
-const jsdom = require("jsdom");
-const { JSDOM } = jsdom;
 
 exports.getAllTests = (req, res) => {
 
