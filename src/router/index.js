@@ -5,6 +5,7 @@ const newsRouter = require('./news.router');
 const brazilRouter = require('./brazil.router');
 const worldRouter = require('./world.router');
 const predictionsRouter = require('./prediction.router');
+const countryRouter = require('./country.router');
 
 
 
@@ -17,6 +18,7 @@ router.use('/news', newsRouter);
 router.use('/brazil', brazilRouter);
 router.use('/world', worldRouter);
 router.use('/prediction', predictionsRouter);
+router.use('/country', countryRouter);
 
 
 

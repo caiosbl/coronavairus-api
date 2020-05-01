@@ -22,6 +22,10 @@ exports.ApiCoronaLive = Axios.create({
     }
 })
 
+exports.ApiWorld = Axios.create({
+    baseURL: 'https://api.covid19api.com'
+})
+
 
 exports.ApiBrazilByDay = Axios.create({
     baseURL: 'https://api.covid19api.com/live/country/brazil'
