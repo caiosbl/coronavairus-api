@@ -4,13 +4,6 @@ const Api = require('../utils/apis');
 const ApiNews = Api.ApiNews;
 
 
-const newsSort = (a, b) => {
-    if (b > a) return 1;
-    return -1;
-}
-
-
-
 exports.getLastNews = (req, res) => {
 
     const query = queryString.parse(req._parsedUrl.query);
