@@ -83,7 +83,7 @@ insight.methods.getInfo = function getInfo() {
 
         lowestMortalityIncrease: {
             uf: this.lowestMortalityIncreaseUf,
-            stateName: ufMap[this.greatestMortalityIncreaseUf],
+            stateName: ufMap[this.lowestMortalityIncreaseUf],
             increaseRate: this.lowestMortalityIncreaseRate
         }
 
