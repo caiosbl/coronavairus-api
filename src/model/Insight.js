@@ -1,5 +1,6 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
+const ufMap = require('../utils/states.name.map');
 
 
 var insight = new Schema({
@@ -15,6 +16,10 @@ var insight = new Schema({
         required: true
     },
 
+    greatestCasesOcurrenceIncreaseUf: {
+        type: String,
+        required: true
+    },
     greatestCasesOcurrenceIncreaseUf: {
         type: String,
         required: true
@@ -59,15 +64,31 @@ insight.methods.getInfo = function getInfo() {
     return {
         date: this.date,
         brazilDoubleCasesDays: this.brazilDoubleCasesDays,
-        greatestCasesOcurrenceIncreaseUf: this.greatestCasesOcurrenceIncreaseUf,
-        greatestCasesOcurrenceIncreaseRate: this.greatestCasesOcurrenceIncreaseRate,
-        greatestDeathOcurrenceIncreaseUf: this.greatestDeathOcurrenceIncreaseUf,
-        greatestDeathOcurrenceIncreaseRate: this.greatestDeathOcurrenceIncreaseRate,
-        greatestMortalityIncreaseUf: this.greatestMortalityIncreaseUf,
-        greatestMortalityIncreaseRate: this.greatestMortalityIncreaseRate,
-        lowestMortalityIncreaseUf: this.lowestMortalityIncreaseUf,
-        lowestMortalityIncreaseRate: this.lowestMortalityIncreaseRate
+        greatestCasesOcurrenceIncrease: {
+            uf: this.greatestCasesOcurrenceIncreaseUf,
+            stateName: ufMap[this.greatestCasesOcurrenceIncreaseUf],
+            increaseRate: this.greatestCasesOcurrenceIncreaseRate
+        },
+        greatestDeathOcurrenceIncrease: {
+            uf: this.greatestDeathOcurrenceIncreaseUf,
+            stateName: ufMap[this.greatestDeathOcurrenceIncreaseUf],
+            increaseRate: this.greatestDeathOcurrenceIncreaseRate
+        },
+
+        greatestMortalityIncrease: {
+            uf: this.greatestMortalityIncreaseUf,
+            stateName: ufMap[this.greatestMortalityIncreaseUf],
+            increaseRate: this.greatestMortalityIncreaseRate
+        },
+
+        lowestMortalityIncrease: {
+            uf: this.lowestMortalityIncreaseUf,
+            stateName: ufMap[this.greatestMortalityIncreaseUf],
+            increaseRate: this.lowestMortalityIncreaseRate
+        }
+
     }
+
 }
 
 /**
