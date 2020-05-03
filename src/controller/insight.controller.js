@@ -117,13 +117,13 @@ getMaxCasesDay = (data) => {
 
 getBrazilDoubleCaseDays = async () => {
     const data = await Brazil.find().sort({ date: -1 }).exec();
-    const { maxCasesDay, i } = getMaxCasesDay(data);
+    const totalCases = data[0].totalCases;
 
     let doubleCasesDays = 0;
-    const doubleFactor = maxCasesDay.newCases / 2;
+    const doubleFactor = totalCases / 2;
 
 
-    data.slice(i + 1, data.length).forEach(element => { if (element.newCases > doubleFactor) doubleCasesDays++; });
+    data.slice(0, data.length).forEach(element => { if (element.totalCases > doubleFactor) doubleCasesDays++; });
     return doubleCasesDays;
 }
 
