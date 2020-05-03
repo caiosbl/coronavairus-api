@@ -8,6 +8,7 @@ const predictionsRouter = require('./prediction.router');
 const countryRouter = require('./country.router');
 const testRouter = require('./test.router');
 const insightRouter = require('./insight.router');
+const timelineRouter  = require('./timeline.router');
 
 
 router.get('/', function (req, res, next) {
@@ -22,6 +23,8 @@ router.use('/prediction', predictionsRouter);
 router.use('/country', countryRouter);
 router.use('/test', testRouter);
 router.use('/insight', insightRouter);
+router.use('/timeline', timelineRouter);
+
 
 
 

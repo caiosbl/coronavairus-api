@@ -101,23 +101,23 @@ getStatesInsights = async () => {
 }
 
 getMaxCasesDay = (data) => {
-let i = 0;
-let maxCasesDay = data[0];
+    let i = 0;
+    let maxCasesDay = data[0];
 
-data.forEach((element, index )=> {
-    if (element.newCases > maxCasesDay.newCases) {
-        maxCasesDay = element;
-        i  = index;
-    };
-});
+    data.forEach((element, index) => {
+        if (element.newCases > maxCasesDay.newCases) {
+            maxCasesDay = element;
+            i = index;
+        };
+    });
 
-return {i: i, maxCasesDay: maxCasesDay};
+    return { i: i, maxCasesDay: maxCasesDay };
 
 }
 
 getBrazilDoubleCaseDays = async () => {
     const data = await Brazil.find().sort({ date: -1 }).exec();
-    const {maxCasesDay, i} = getMaxCasesDay(data);
+    const { maxCasesDay, i } = getMaxCasesDay(data);
 
     let doubleCasesDays = 0;
     const doubleFactor = maxCasesDay.newCases / 2;
@@ -126,6 +126,7 @@ getBrazilDoubleCaseDays = async () => {
     data.slice(i + 1, data.length).forEach(element => { if (element.newCases > doubleFactor) doubleCasesDays++; });
     return doubleCasesDays;
 }
+
 
 
 exports.updateInsights = async () => {
