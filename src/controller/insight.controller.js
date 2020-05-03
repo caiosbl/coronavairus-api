@@ -100,12 +100,30 @@ getStatesInsights = async () => {
 
 }
 
+getMaxCasesDay = (data) => {
+let i = 0;
+let maxCasesDay = data[0];
+
+data.forEach((element, index )=> {
+    if (element.newCases > maxCasesDay.newCases) {
+        maxCasesDay = element;
+        i  = index;
+    };
+});
+
+return {i: i, maxCasesDay: maxCasesDay};
+
+}
+
 getBrazilDoubleCaseDays = async () => {
     const data = await Brazil.find().sort({ date: -1 }).exec();
-    let doubleCasesDays = 0;
-    const doubleFactor = data[0].newCases / 2;
+    const {maxCasesDay, i} = getMaxCasesDay(data);
 
-    data.slice(1, data.length).forEach(element => { if (element.newCases > doubleFactor) doubleCasesDays++; });
+    let doubleCasesDays = 0;
+    const doubleFactor = maxCasesDay.newCases / 2;
+
+
+    data.slice(i + 1, data.length).forEach(element => { if (element.newCases > doubleFactor) doubleCasesDays++; });
     return doubleCasesDays;
 }
 
@@ -127,7 +145,7 @@ exports.updateInsights = async () => {
         greatestMortalityIncreaseRate: greatestMortalityVariation.mortalityVariation,
         lowestMortalityIncreaseUf: lowestMortalityVariation.uf,
         lowestMortalityIncreaseRate: lowestMortalityVariation.mortalityVariation,
-        date: `${new Date().getDate()}/${new Date().getMonth() + 1}/ ${new Date().getFullYear()}`
+        date: `${new Date().getDate()}/${new Date().getMonth() + 1}/${new Date().getFullYear()}`
     };
 
 

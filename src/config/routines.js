@@ -39,7 +39,6 @@ setInterval(updateStates, UPDATE_INTERVAL);
 setInterval(updateBrazilLive, UPDATE_INTERVAL);
 setInterval(updateWorldLive, UPDATE_INTERVAL);
 setInterval(updatePredictions, UPDATE_PREDICTIONS_INTERVAL);
-setInterval(updateInsights, UPDATE_PREDICTIONS_INTERVAL);
 setInterval(updateCountry, UPDATE_INTERVAL);
 setInterval(updateTests, UPDATE_INTERVAL);
 setInterval(updateInsights, UPDATE_INSIGHTS);
