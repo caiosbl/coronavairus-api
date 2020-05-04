@@ -88,8 +88,6 @@ exports.updateExisting = async () => {
         lastFetch: req.data.statistic_taken_at
     };
 
-    console.log(data)
-
 
             const actualData = Country.findOne({ name: data.name });
 
