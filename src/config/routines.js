@@ -28,7 +28,7 @@ const UPDATE_PREDICTIONS_INTERVAL = process.env.UPDATE__PREDICTIONS_INTERVAL;
 const UPDATE_INTERVAL = process.env.UPDATE_INTERVAL;
 const UPDATE_INSIGHTS = process.env.UPDATE_INSIGHTS;
 
-/*
+
 updateBrazilLive();
 updateWorldLive();
 updateNews();
@@ -38,8 +38,8 @@ updateCountry();
 updateTests();
 updateInsights();
 updateTimeline(); 
-*/
-updateStates();
+
+
 
 setInterval(updateNews, UPDATE_NEWS_INTERVAL);
 setInterval(updateStates, UPDATE_INTERVAL);
