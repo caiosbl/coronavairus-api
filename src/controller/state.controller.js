@@ -3,13 +3,48 @@ const Apis = require('../utils/apis');
 const ApiBrazil = Apis.ApiBrazil;
 const ApiBrazilCSV = Apis.ApiBrazilCSV;
 const ufMap = require('../utils/states.uf.map');
-const queryString = require('query-string');
+const HandlerTwitter = require('../utils/twitter').postMessage;
+const BotRecord = require('../model/BotRecord');
+
+const processMessages = async (data) => {
+    const lastBotRecord = await BotRecord.findOne();
+    const canRegisterToday = new Date(lastBotRecord.statesRecord).getDate() !== new Date().getDate();
+    const lastState = await State.findOne().sort({ "latest.date": -1 });
+    const isStateUpdated = Number(lastState.latest.date.split("/")[0]) === new Date().getDate();
+    const canTweet = canRegisterToday && isStateUpdated;
+
+
+    if (canTweet) {
+        data.forEach(async (element) => {
+
+            const yesterdayData = await State.findOne({ name: element.nome });
+
+            const today = element;
+
+            const yesterday = Object.values(yesterdayData.data).slice(-2)[0];
+            const cases = today.qtd_confirmado;
+            const deaths = today.qtd_obito;
+            const newCases = today.qtd_confirmado - yesterday.cases;
+            const newDeaths = today.qtd_obito - yesterday.deaths;
+            const baseMsg = `${element.nome} teve ${newCases} novos casos e ${newDeaths} mortes por Covid-19 confirmados hoje, no total o estado acumula ${cases} casos e ${deaths} mortes`
+
+            HandlerTwitter(baseMsg);
+
+        });
+
+        const newBotRecord = new BotRecord();
+        newBotRecord.createBotRecord({ statesRecord: new Date() });
+        newBotRecord.save(async (error) => console.log(error));
+    }
+
+
+}
 
 
 exports.getAllStates = (req, res) => {
 
-    const queryDb = State.find().sort({"data.date": -1});
-    
+    const queryDb = State.find().sort({ "data.date": -1 });
+
     queryDb.exec((error, state) => {
 
         if (!error && state !== null) {
@@ -32,8 +67,8 @@ exports.getStateByUf = (req, res) => {
 
     const uf = req.params.uf;
 
-    const queryDb = State.findOne({uf: uf});
-    
+    const queryDb = State.findOne({ uf: uf });
+
     queryDb.exec((error, state) => {
 
         if (!error && state !== null) {
@@ -91,9 +126,13 @@ exports.updateStates = async () => {
 
     ApiBrazil.get("PortalMapa").then(res => {
 
-        console.log(`Starting to Update States - ${new Date()}`)
+        console.log(`Starting to Update States - ${new Date()}`);
+
+        processMessages(res.data.results);
 
         res.data.results.forEach(async (element, index) => {
+
+
 
             const date = new Date(element.updatedAt);
             const dateFormatted = `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`
@@ -123,7 +162,7 @@ exports.updateStates = async () => {
                 }
             }
 
-        });
+        }); 
 
     }).catch((e) => console.log(`Fail to Request to Brazil Api - Update States \n`, e));
 
