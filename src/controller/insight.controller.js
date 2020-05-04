@@ -1,6 +1,8 @@
 const Insight = require('../model/Insight');
 const Brazil = require('../model/Brazil');
 const State = require('../model/State');
+const HandlerTwitter = require('../utils/twitter').postMessage;
+const ufMap = require('../utils/states.name.map');
 
 
 
@@ -127,6 +129,31 @@ getBrazilDoubleCaseDays = async () => {
     return doubleCasesDays;
 }
 
+const processMessages = (data) => {
+
+    const {
+        brazilDoubleCasesDays,
+        greatestCasesOcurrenceIncreaseUf,
+        greatestCasesOcurrenceIncreaseRate,
+        greatestDeathOcurrenceIncreaseUf,
+        greatestDeathOcurrenceIncreaseRate,
+        greatestMortalityIncreaseUf,
+        greatestMortalityIncreaseRate,
+        lowestMortalityIncreaseUf,
+        lowestMortalityIncreaseRate,
+    } = data;
+
+    const baseMsg = (state,rate,metric,increase) => `${state} teve ${increase ? 'um aumento' : 'uma queda'} de ${rate.toFixed(2)}% na ${metric} de Covid-19 nos últimos 7 dias, ${increase ? 'o' : 'a'} maior do Brasil no período.`
+
+    const doubleCasesMsg = (days) => `O número de casos confirmados no Brasil está dobrando em ${days} dias.`
+
+    HandlerTwitter(doubleCasesMsg(brazilDoubleCasesDays));
+    HandlerTwitter(baseMsg(ufMap[greatestCasesOcurrenceIncreaseUf], greatestCasesOcurrenceIncreaseRate, 'ocorrência de casos', true));
+    HandlerTwitter(baseMsg(ufMap[greatestDeathOcurrenceIncreaseUf], greatestDeathOcurrenceIncreaseRate, 'ocorrência de mortes', true));
+    HandlerTwitter(baseMsg(ufMap[greatestMortalityIncreaseUf], greatestMortalityIncreaseRate, 'taxa de mortalidade', true));
+    HandlerTwitter(baseMsg(ufMap[lowestMortalityIncreaseUf], lowestMortalityIncreaseRate, 'taxa de mortalidade', false));
+}
+
 
 
 exports.updateInsights = async () => {
@@ -158,7 +185,11 @@ exports.updateInsights = async () => {
             console.log(error, 'Fail to Save Insight')
         }
 
-        else console.log(`Insight saved with sucess ${new Date()}`)
+        else {
+            console.log(`Insight saved with sucess ${new Date()}`);
+            processMessages(data);
+        }
+
 
 
     });

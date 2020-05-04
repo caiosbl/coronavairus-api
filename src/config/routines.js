@@ -21,11 +21,12 @@ const updateTimeline = TimelineController.update;
 
 
 
+
+
 const UPDATE_NEWS_INTERVAL = process.env.UPDATE_NEWS_INTERVAL;
 const UPDATE_PREDICTIONS_INTERVAL = process.env.UPDATE__PREDICTIONS_INTERVAL;
 const UPDATE_INTERVAL = process.env.UPDATE_INTERVAL;
 const UPDATE_INSIGHTS = process.env.UPDATE_INSIGHTS;
-
 
 
 updateBrazilLive();
