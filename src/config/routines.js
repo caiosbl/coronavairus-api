@@ -14,10 +14,11 @@ const updateNews = NewsController.updateNews;
 const updateBrazilLive = BrazilController.updateLive;
 const updateWorldLive = WorldController.updateLive;
 const updatePredictions = PredictionController.updateLive;
-const updateCountry = CountryController.update;
+const updateCountry = CountryController.updateExisting;
 const updateTests = TestController.updateTests;
 const updateInsights = InsightController.updateInsights;
 const updateTimeline = TimelineController.update;
+
 
 
 const UPDATE_NEWS_INTERVAL = process.env.UPDATE_NEWS_INTERVAL;
@@ -35,7 +36,8 @@ updatePredictions();
 updateCountry();
 updateTests();
 updateInsights();
-updateTimeline();
+updateTimeline(); 
+
 
 
 setInterval(updateNews, UPDATE_NEWS_INTERVAL);

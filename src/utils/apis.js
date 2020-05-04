@@ -26,6 +26,10 @@ exports.ApiWorld = Axios.create({
     baseURL: 'https://api.covid19api.com'
 })
 
+exports.ApiWorldApify = Axios.create({
+    baseURL: 'https://api.apify.com/v2/key-value-stores/tVaYRsPHLjNdNBu7S/records/LATEST?disableRedirect=true'
+})
+
 
 exports.ApiBrazilByDay = Axios.create({
     baseURL: 'https://api.covid19api.com/live/country/brazil'
@@ -38,3 +42,4 @@ exports.ApiPredictions = Axios.create({
 exports.ApiTests = Axios.create({
     baseURL: 'https://covid-insumos.saude.gov.br/paineis/insumos/mapas/teste.php'
 })
+

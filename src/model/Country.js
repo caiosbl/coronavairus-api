@@ -1,5 +1,7 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
+const Utils = require('../utils/utils');
+const toNumber = Utils.toNumber;
 
 var country = new Schema({
 
@@ -113,6 +115,29 @@ country.methods.updateCountryData = function updateCountryData(req) {
     this.name = name;
     this.isoA2 = isoA2;
     this.isoA3 = isoA3;
+    this.totalCases = totalCases;
+    this.newCases = newCases;
+    this.activeCases = activeCases;
+    this.totalDeaths = totalDeaths;
+    this.newDeaths = newDeaths;
+    this.totalRecovered = totalRecovered;
+    this.seriousCritical = seriousCritical;
+    this.lastFetch = lastFetch;
+
+}
+country.methods.updateCountry = function updateCountry(req) {
+
+   
+    let totalCases = toNumber(req.totalCases);
+    let newCases = toNumber(req.newCases);
+    let totalDeaths = toNumber(req.totalDeaths);
+    let newDeaths = toNumber(req.newDeaths);
+    let totalRecovered = toNumber(req.totalRecovered);
+    let seriousCritical = toNumber(req.seriousCritical);
+    let activeCases = totalCases - (totalDeaths + totalRecovered);
+    let lastFetch = req.lastFetch;
+
+
     this.totalCases = totalCases;
     this.newCases = newCases;
     this.activeCases = activeCases;
