@@ -55,17 +55,17 @@ exports.update = async () => {
             if (element.totalCases >= keys[iCases]) {
                 data['numberOfCases'] = keys[iCases];
                 iCases++;
-                processMessages(element.totalCases, keys[iCases], 'casos');
+                
             }
             if (element.totalDeaths >= keys[iDeaths]) {
                 data['numberOfDeaths'] = keys[iDeaths];
                 iDeaths++;
-                processMessages(element.totalDeaths, keys[iDeaths], 'mortes');
+               
             }
             if (element.totalRecovered >= keys[iRecovered]) {
                 data['numberOfRecovered'] = keys[iRecovered];
                 iRecovered++;
-                processMessages(element.totalRecovered, keys[iRecovered], 'curados')
+               
             }
 
 
@@ -77,6 +77,18 @@ exports.update = async () => {
                 }
 
                 else {
+                    if (element.totalCases >= keys[iCases]) {
+                      
+                        processMessages(element.totalCases, keys[iCases], 'casos');
+                    }
+                    if (element.totalDeaths >= keys[iDeaths]) {
+                       
+                        processMessages(element.totalDeaths, keys[iDeaths], 'mortes');
+                    }
+                    if (element.totalRecovered >= keys[iRecovered]) {
+                       
+                        processMessages(element.totalRecovered, keys[iRecovered], 'curados')
+                    }
 
                     console.log(`Timeline item saved with sucess ${new Date()}`);
                 }
