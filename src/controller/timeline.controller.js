@@ -33,28 +33,40 @@ exports.update = async () => {
         keys.push(keys.slice(-1)[0] + 50000)
     };
 
-    let i = 0;
+    let iCases = 0;
+    let iDeaths = 0;
+    let iRecovered = 0;
 
     data.forEach(element => {
 
-        if (element.totalCases >= keys[i]) {
+        if (element.totalCases >= keys[iCases] || element.totalDeaths >= keys[iDeaths] || element.totalRecovered >= keys[iRecovered]) {
             let newTimelineItem = new Timeline();
-            const data = { date: element.date, numberOfCases: keys[i] };
+            const data = { date: element.date, };
+
+
+            if (element.totalCases >= keys[iCases]) data['numberOfCases'] = keys[iCases];
+            if (element.totalDeaths >= keys[iDeaths]) data['numberOfDeaths'] = keys[iDeaths];
+            if (element.totalRecovered >= keys[iRecovered]) data['numberOfRecovered'] = keys[iRecovered];
+
+            if (element.totalCases >= keys[iCases]) iCases++;
+            if (element.totalDeaths >= keys[iDeaths]) iDeaths++;
+            if (element.totalRecovered >= keys[iRecovered]) iRecovered++;
 
             newTimelineItem.create(data);
             newTimelineItem.save(async (error) => {
-        
+
                 if (error) {
                     console.log(error, 'Fail to Save Timeline Item')
                 }
-        
+
                 else {
+                
                     console.log(`Timeline item saved with sucess ${new Date()}`);
                 }
 
-            });   
-            
-            i++;
+            });
+
+
         };
     });
 

@@ -20,9 +20,6 @@ const updateInsights = InsightController.updateInsights;
 const updateTimeline = TimelineController.update;
 
 
-
-
-
 const UPDATE_NEWS_INTERVAL = process.env.UPDATE_NEWS_INTERVAL;
 const UPDATE_PREDICTIONS_INTERVAL = process.env.UPDATE__PREDICTIONS_INTERVAL;
 const UPDATE_INTERVAL = process.env.UPDATE_INTERVAL;
@@ -36,7 +33,7 @@ updateStates();
 updatePredictions();
 updateCountry();
 updateTests();
-updateInsights();
+updateInsights(); 
 updateTimeline(); 
 
 

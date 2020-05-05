@@ -12,12 +12,28 @@ var timeline = new Schema({
     numberOfCases: {
         type: Number, 
         unique: true,
-        required: true
+        
+    },
+
+    numberOfDeaths: {
+        type: Number, 
+        unique: true,
+       
+    },
+
+    numberOfRecovered: {
+        type: Number, 
+        unique: true,
+       
     }
 
 }, { autoIndex: true });
 
 const normalizeKey = (value) => {
+
+
+    if (!value) return null;
+    
     if (value < 1000) {
         return String(value);
     }
@@ -31,7 +47,9 @@ const normalizeKey = (value) => {
 timeline.methods.getInfo = function getInfo() {
     return {
         date: this.date,
-        numberOfCases: normalizeKey(this.numberOfCases)
+        numberOfCases: normalizeKey(this.numberOfCases),
+        numberOfDeaths: normalizeKey(this.numberOfDeaths),
+        numberOfRecovered: normalizeKey(this.numberOfRecovered)
     }
 }
 
@@ -45,10 +63,15 @@ timeline.methods.create = function create(req) {
 
 
     let date = req.date;
-    let numberOfCases =  req.numberOfCases;
+    let numberOfCases = req.numberOfCases;
+    let numberOfDeaths = req.numberOfDeaths;
+    let numberOfRecovered = req.numberOfRecovered;
 
     this.date = date;
-    this.numberOfCases = numberOfCases;
+    if(numberOfCases) this.numberOfCases = numberOfCases;
+    if(numberOfDeaths) this.numberOfDeaths = numberOfDeaths;
+    if(numberOfRecovered) this.numberOfRecovered = numberOfRecovered;
+    
 }
 
 
