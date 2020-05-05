@@ -1,5 +1,13 @@
 const Timeline = require('../model/Timeline');
 const Brazil = require('../model/Brazil');
+const HandlerTwitter = require('../utils/twitter').postMessage;
+
+
+const processMessages = (total, record, type) => {
+
+    const baseMsg = `O Brasil superou ${record.toLocaleString()} ${type} hoje, no total o país acumula ${type}.`
+    HandlerTwitter(baseMsg);
+}
 
 exports.getTimeline = (req, res) => {
 
@@ -44,13 +52,22 @@ exports.update = async () => {
             const data = { date: element.date, };
 
 
-            if (element.totalCases >= keys[iCases]) data['numberOfCases'] = keys[iCases];
-            if (element.totalDeaths >= keys[iDeaths]) data['numberOfDeaths'] = keys[iDeaths];
-            if (element.totalRecovered >= keys[iRecovered]) data['numberOfRecovered'] = keys[iRecovered];
+            if (element.totalCases >= keys[iCases]) {
+                data['numberOfCases'] = keys[iCases];
+                iCases++;
+                processMessages(element.totalCases, keys[iCases], 'casos');
+            }
+            if (element.totalDeaths >= keys[iDeaths]) {
+                data['numberOfDeaths'] = keys[iDeaths];
+                iDeaths++;
+                processMessages(element.totalDeaths, keys[iDeaths], 'mortes');
+            }
+            if (element.totalRecovered >= keys[iRecovered]) {
+                data['numberOfRecovered'] = keys[iRecovered];
+                iRecovered++;
+                processMessages(element.totalRecovered, keys[iRecovered], 'curados')
+            }
 
-            if (element.totalCases >= keys[iCases]) iCases++;
-            if (element.totalDeaths >= keys[iDeaths]) iDeaths++;
-            if (element.totalRecovered >= keys[iRecovered]) iRecovered++;
 
             newTimelineItem.create(data);
             newTimelineItem.save(async (error) => {
@@ -60,7 +77,7 @@ exports.update = async () => {
                 }
 
                 else {
-                
+
                     console.log(`Timeline item saved with sucess ${new Date()}`);
                 }
 
