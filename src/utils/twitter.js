@@ -15,8 +15,9 @@ const getTags = () => {
     const tags = ['coronavirus', 'coronavairus', 'news', 'quarentena', 'quarentine', 'brazil', 'brasil'];
 
     const tagsFormatted = tags.map(tag => `#${tag}`);
+    const frontendAds = 'veja mais em http://coronavairus.com.br';
 
-    return tagsFormatted.join(' ')
+    return `${tagsFormatted.join(' ')} ${frontendAds}`
 }
 
 exports.postMessage = (message) => Bot.post('statuses/update', { status: `${message} ${getTags()}`.slice(0,280) }, function(err, data, response) {
