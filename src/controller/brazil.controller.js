@@ -101,7 +101,7 @@ exports.updateLive = async () => {
             newDeaths:reqDataMinSaude.slice(-1)[0]['qtd_obito'] - reqDataMinSaude.slice(-2)[0]['qtd_obito'],
             totalRecovered: ToNumber(reqData.total_recovered),
             seriousCritical: ToNumber(reqData.serious_critical),
-            date: `${reqTime.slice(0, 10)}T00:00:00.000+00:00`
+            date: `${reqDataMinSaude.slice(-1)[0]['updatedAt'].slice(0, 10)}T00:00:00.000+00:00`
         };
 
         let newBrazilData = new Brazil();
