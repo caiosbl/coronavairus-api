@@ -26,6 +26,7 @@ const UPDATE_INTERVAL = process.env.UPDATE_INTERVAL;
 const UPDATE_INSIGHTS = process.env.UPDATE_INSIGHTS;
 
 
+
 updateBrazilLive();
 updateWorldLive();
 updateNews();

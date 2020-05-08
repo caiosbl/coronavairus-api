@@ -126,7 +126,7 @@ getBrazilDoubleCaseDays = async () => {
 
 
     data.slice(0, data.length).forEach(element => { if (element.totalCases > doubleFactor) doubleCasesDays++; });
-    return doubleCasesDays;
+    return { doubleCasesDays, lastFetch: data[0].date };
 }
 
 const processMessages = (data) => {
@@ -143,7 +143,7 @@ const processMessages = (data) => {
         lowestMortalityIncreaseRate,
     } = data;
 
-    const baseMsg = (state,rate,metric,increase) => `${state} teve ${increase ? 'um aumento' : 'uma queda'} de ${rate.toFixed(2)}% na ${metric} de Covid-19 nos últimos 7 dias, ${increase ? 'o' : 'a'} maior do Brasil no período.`
+    const baseMsg = (state, rate, metric, increase) => `${state} teve ${increase ? 'um aumento' : 'uma queda'} de ${rate.toFixed(2)}% na ${metric} de Covid-19 nos últimos 7 dias, ${increase ? 'o' : 'a'} maior do Brasil no período.`
 
     const doubleCasesMsg = (days) => `O número de casos confirmados no Brasil está dobrando em ${days} dias.`
 
@@ -151,20 +151,20 @@ const processMessages = (data) => {
     HandlerTwitter(baseMsg(ufMap[greatestCasesOcurrenceIncreaseUf], greatestCasesOcurrenceIncreaseRate, 'ocorrência de casos', true));
     HandlerTwitter(baseMsg(ufMap[greatestDeathOcurrenceIncreaseUf], greatestDeathOcurrenceIncreaseRate, 'ocorrência de mortes', true));
     HandlerTwitter(baseMsg(ufMap[greatestMortalityIncreaseUf], greatestMortalityIncreaseRate, 'taxa de mortalidade', true));
-    HandlerTwitter(baseMsg(ufMap[lowestMortalityIncreaseUf], lowestMortalityIncreaseRate, 'taxa de mortalidade', false));
+    HandlerTwitter(baseMsg(ufMap[lowestMortalityIncreaseUf], Math.abs(lowestMortalityIncreaseRate), 'taxa de mortalidade', false));
 }
 
 
 
 exports.updateInsights = async () => {
 
-    const brazilDoubleCasesDays = await getBrazilDoubleCaseDays();
+    const { doubleCasesDays, lastFetch } = await getBrazilDoubleCaseDays();
     const { greatestCasesIncrease, greatestDeathsIncrease, greatestMortalityVariation, lowestMortalityVariation } = await getStatesInsights();
 
     let newInsight = new Insight();
 
     const data = {
-        brazilDoubleCasesDays: brazilDoubleCasesDays,
+        brazilDoubleCasesDays: doubleCasesDays,
         greatestCasesOcurrenceIncreaseUf: greatestCasesIncrease.uf,
         greatestCasesOcurrenceIncreaseRate: greatestCasesIncrease.casesIncrease,
         greatestDeathOcurrenceIncreaseUf: greatestDeathsIncrease.uf,
@@ -173,7 +173,7 @@ exports.updateInsights = async () => {
         greatestMortalityIncreaseRate: greatestMortalityVariation.mortalityVariation,
         lowestMortalityIncreaseUf: lowestMortalityVariation.uf,
         lowestMortalityIncreaseRate: lowestMortalityVariation.mortalityVariation,
-        date: `${new Date().getDate()}/${new Date().getMonth() + 1}/${new Date().getFullYear()}`
+        date: `${new Date(lastFetch).getDate()}/${new Date().getMonth(lastFetch) + 1}/${new Date().getFullYear(lastFetch)}`
     };
 
 
