@@ -5,6 +5,8 @@ const ApiBrazilCSV = Apis.ApiBrazilCSV;
 const ufMap = require('../utils/states.uf.map');
 const HandlerTwitter = require('../utils/twitter').postMessage;
 const BotRecord = require('../model/BotRecord');
+const csv = require('csvtojson');
+const ufMapName = require('../utils/states.name.map');
 
 const processMessages = async (data) => {
     const lastBotRecord = await BotRecord.findOne();
@@ -37,11 +39,57 @@ const processMessages = async (data) => {
         newBotRecord.save(async (error) => console.log(error));
     }
 
+}
+
+
+
+exports.updateStates = async () => {
+
+    ApiBrazil.get("PortalMapa").then(res => {
+
+        console.log(`Starting to Update States - ${new Date()}`);
+
+        processMessages(res.data.results);
+
+        res.data.results.forEach(async (element, index) => {
+
+            const date = new Date(element.updatedAt);
+            const dateFormatted = `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`
+
+            const data = { date: dateFormatted, cases: element.qtd_confirmado, deaths: element.qtd_obito, suspects: 0, refuses: 0 }
+
+            const state = await State.findOne({ uf: ufMap[element.objectId] });
+
+            if (!state) console.log("State not found - ", ufMap[element.objectId]);
+
+            else {
+
+                try {
+
+                    state.updateData(data);
+                    state.markModified("data");
+
+                    await state.save(function (err, state) {
+                        if (err) return console.error(err);
+                        else console.log(`State ${state.uf} Updated with sucess`)
+                    });
+
+                }
+                catch (e) {
+
+                    console.log(`Fail to Update State \n`, e);
+                }
+            }
+
+        });
+
+    }).catch((e) => console.log(`Fail to Request to Brazil Api - Update States \n`, e));
 
 }
 
 
-exports.getAllStates = (req, res) => {
+
+exports.getTimeseries = (req, res) => {
 
     const queryDb = State.find().sort({ "data.date": -1 });
 
@@ -49,9 +97,7 @@ exports.getAllStates = (req, res) => {
 
         if (!error && state !== null) {
 
-            res.json({
-                content: state.map(element => element.getInfo())
-            });
+            res.json(state.map(element => element.getTimeseries()));
 
 
         } else {
@@ -63,16 +109,60 @@ exports.getAllStates = (req, res) => {
 
 }
 
-exports.getStateByUf = (req, res) => {
+exports.getTimeseriesByUf = (req, res) => {
 
     const uf = req.params.uf;
 
-    const queryDb = State.findOne({ uf: uf });
+    const queryDb = State.findOne({uf: uf.toUpperCase()});
 
     queryDb.exec((error, state) => {
 
         if (!error && state !== null) {
-            res.json(state.getInfo());
+
+            res.json(state.getTimeseries());
+
+
+        } else {
+
+            res.status(400).json({ message: "Fail to get states" });;
+
+        }
+    });
+
+}
+
+
+
+exports.getLastData = (req, res) => {
+
+    const queryDb = State.find();
+
+    queryDb.exec((error, state) => {
+
+        if (!error && state !== null) {
+
+            res.json(state.map(element => element.getLastData()));
+
+
+        } else {
+
+            res.status(400).json({ message: "Fail to get states" });;
+
+        }
+    });
+
+}
+
+exports.getLastDataByUf = (req, res) => {
+
+    const uf = req.params.uf;
+
+    const queryDb = State.findOne({ uf: uf.toUpperCase() });
+
+    queryDb.exec((error, state) => {
+
+        if (!error && state !== null) {
+            res.json(state.getLastData());
 
         } else {
 
@@ -84,27 +174,29 @@ exports.getStateByUf = (req, res) => {
 }
 
 
-exports.initStates = () => {
+
+exports.init = () => {
 
     ApiBrazil.get("PortalMapa").then(res => {
 
         console.log(`Starting to Saving States - ${new Date()}`)
 
-        res.data.data.forEach((element, index) => {
-
+        res.data.results.forEach((element, index) => {
 
             const date = new Date(element.updatedAt);
             const dateFormatted = `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`
 
-            const data = { date: dateFormatted, cases: element.qtd_confirmado, deaths: element.qtd_obito, suspects: 0, refuses: 0 };
-
+            const data = { date: dateFormatted, cases: element.qtd_confirmado, deaths: element.qtd_obito, suspects: 0, refuses: 0 }
 
             const stateData = {}
             stateData[dateFormatted] = data
             const state = { name: element.nome, uf: ufMap[element.objectId], latest: data, data: stateData };
 
+
             let newState = new State();
+
             newState.createState(state);
+
 
             newState.save(function (error) {
 
@@ -122,119 +214,61 @@ exports.initStates = () => {
 }
 
 
-exports.updateStates = async () => {
 
-    ApiBrazil.get("PortalMapa").then(res => {
+exports.populateFromCsv = async () => {
 
-        console.log(`Starting to Update States - ${new Date()}`);
+    const brazilData = await ApiBrazilCSV.get("");
+    let data = []
+    await csv({ delimiter: ";" }).fromString(brazilData.data).subscribe((csvLine) => data.push(csvLine));
+    const dataNormalized = data.map(element => {
+        const date = new Date(element.data);
+        const dateFormatted = `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`
 
-        processMessages(res.data.results);
+        return {
+            date: dateFormatted,
+            uf: element.estado,
+            name: ufMapName[element.estado],
+            newCases: Number(element.casosNovos),
+            newDeaths: Number(element.obitosNovos),
+            cases: Number(element.casosAcumulados),
+            deaths: Number(element.obitosAcumulados),
+            suspects: 0,
+            refuses: 0
+        }
+    });
 
-        res.data.results.forEach(async (element, index) => {
+    let states = await State.find();
 
+    dataNormalized.forEach(async (element) => {
+        const stateData = {};
+        stateData[element.date] = element;
 
+        const stateFounded = states.filter(e => e.uf === element.uf)[0];
 
-            const date = new Date(element.updatedAt);
-            const dateFormatted = `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`
+        if (!stateFounded) {
+            console.log('error')
+        }
 
-            const data = { date: dateFormatted, cases: element.qtd_confirmado, deaths: element.qtd_obito, suspects: 0, refuses: 0 }
-
-            const state = await State.findOne({ uf: ufMap[element.objectId] });
-
-            if (!state) console.log("State not found - ", ufMap[element.objectId]);
-
-            else {
-
-                try {
-
-                    state.setData(data);
-                    state.markModified("data");
-
-                    await state.save(function (err, state) {
-                        if (err) return console.error(err);
-                        else console.log(`State Updated with sucess \n ${JSON.stringify(state.getInfo())}`)
-                    });
-
-                }
-                catch (e) {
-
-                    console.log(`Fail to Update State \n`, e);
-                }
+        else {
+            try {
+                stateFounded.data[element.date] = {date: element.date, newCases: element.newCases, newDeaths: element.newDeaths, cases: element.cases, deaths: element.deaths};
+            }
+            catch (e) {
+                console.log(e);
             }
 
-        }); 
+        }
+    });
 
-    }).catch((e) => console.log(`Fail to Request to Brazil Api - Update States \n`, e));
+    states.forEach(stateBd => {
 
-}
+        stateBd.markModified("data");
 
-
-
-exports.updateStatesFromCSV = () => {
-
-
-    ApiBrazilCSV.get("").then((res) => {
-
-        console.log(`Starting to Update States - ${new Date()}`);
-
-        const data = {}
-        let processed = res.data.split("\r\n").map(data => data.split(";"));
-        processed = processed.slice(1, processed.length).filter(d => d[1]);
-
-
-        processed.forEach(v => {
-
-            if (v) {
-                data[v[1]] = { ...data[v[1]], cases: Number(v[4]) };
-                data[v[1]] = { ...data[v[1]], deaths: Number(v[6]) };
-                data[v[1]] = { ...data[v[1]], suspects: 0 };
-                data[v[1]] = { ...data[v[1]], refuses: 0 };
-                data[v[1]] = { ...data[v[1]], date: v[2] };
-            }
-        })
-
-
-        Object.keys(data).map(k => { { return { ...data[k], name: estados[k], uf: k } } }).sort((a, b) => b.cases - a.cases).forEach(async (element, index) => {
-
-            const stateData = {
-                date: element.date, cases: element.cases, deaths: element.deaths,
-                suspects: element.suspects, refuses: element.refuses
-            }
-
-
-            const state = await State.findOne({ uf: element.uf });
-
-            if (!state) console.log("State not Found - ", element.uf);
-
-            else {
-                try {
-
-                    state.setData(stateData);
-                    state.markModified("data");
-                    await state.save(function (err, state) {
-                        if (err) return console.error(err);
-                        else console.log(state)
-
-                    });
-
-                    return console.log("State updated with sucess", e);
-                }
-                catch (e) {
-                    console.log("Fail to update sucess", e);
-                }
-            }
-
+        stateBd.save(function (err, state) {
+            if (err) return console.error(err);
+            else console.log(`State ${stateBd.uf} Updated with sucess`)
         });
+    });
 
-
-
-    }).catch(e => console.log(e))
 
 }
-
-
-
-
-
-
-

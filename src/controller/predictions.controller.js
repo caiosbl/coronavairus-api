@@ -4,7 +4,7 @@ const ApiPredictions = Apis.ApiPredictions;
 
 
 
-exports.updateLive = async () => {
+exports.update = async () => {
 
     const req = await ApiPredictions.get("");
 
@@ -78,8 +78,6 @@ exports.updateLive = async () => {
         console.log(e);
     }
 
-
-
 }
 
 
@@ -91,7 +89,7 @@ exports.getAll = (req, res) => {
 
         if (!error && predictions !== null) {
 
-            res.json({ content: predictions.map(prediction => prediction.getInfo()) });
+            res.json(predictions.map(prediction => prediction.getInfo()));
 
 
         } else {
@@ -112,7 +110,7 @@ exports.getLastData = (req, res) => {
 
         if (!error && predictions !== null) {
 
-            res.json({ content: predictions.reverse().map(prediction => prediction.getInfo()) });
+            res.json(predictions.reverse().map(prediction => prediction.getInfo()));
 
 
         } else {

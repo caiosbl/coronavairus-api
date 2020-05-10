@@ -12,42 +12,54 @@ function dynamicSort(property) {
     }
 }
 
-exports.getAllInsights = (req, res) => {
+const processMessages = (data) => {
 
+    const {
+        brazilDoubleCasesDays,
+        greatestCasesOcurrenceIncreaseUf,
+        greatestCasesOcurrenceIncreaseRate,
+        greatestDeathOcurrenceIncreaseUf,
+        greatestDeathOcurrenceIncreaseRate,
+        greatestMortalityIncreaseUf,
+        greatestMortalityIncreaseRate,
+        lowestMortalityIncreaseUf,
+        lowestMortalityIncreaseRate,
+    } = data;
 
-    const queryDb = Insight.find().sort({ date: -1 });
+    const baseMsg = (state, rate, metric, increase) => `${state} teve ${increase ? 'um aumento' : 'uma queda'} de ${rate.toFixed(2)}% na ${metric} de Covid-19 nos últimos 7 dias, ${increase ? 'o' : 'a'} maior do Brasil no período.`
 
-    queryDb.exec((error, insight) => {
+    const doubleCasesMsg = (days) => `O número de casos confirmados no Brasil está dobrando em ${days} dias.`
 
-        if (!error && insight !== null) {
-
-            res.json({ content: insight.map(element => element.getInfo()) });
-
-
-        } else {
-
-            res.status(400).json({ message: "Insight not founded" });;
-
-        }
-    });
-
+    HandlerTwitter(doubleCasesMsg(brazilDoubleCasesDays));
+    HandlerTwitter(baseMsg(ufMap[greatestCasesOcurrenceIncreaseUf], greatestCasesOcurrenceIncreaseRate, 'ocorrência de casos', true));
+    HandlerTwitter(baseMsg(ufMap[greatestDeathOcurrenceIncreaseUf], greatestDeathOcurrenceIncreaseRate, 'ocorrência de mortes', true));
+    HandlerTwitter(baseMsg(ufMap[greatestMortalityIncreaseUf], greatestMortalityIncreaseRate, 'taxa de mortalidade', true));
+    HandlerTwitter(baseMsg(ufMap[lowestMortalityIncreaseUf], Math.abs(lowestMortalityIncreaseRate), 'taxa de mortalidade', false));
 }
 
-exports.getLastInsights = (req, res) => {
 
-
-    const queryDb = Insight.findOne().sort({ date: -1 }).limit(1);
-
+exports.getAll = (req, res) => {
+    const queryDb = Insight.find().sort({ date: -1 });
     queryDb.exec((error, insight) => {
-
         if (!error && insight !== null) {
-            res.json({ content: insight.getInfo() });
-
-        } else {
-            res.status(400).json({ message: "Insight not founded" });;
+            res.json(insight.map(element => element.getInfo()) );
+        } 
+        else {
+            res.status(400).json({ message: "Insight not found" });;
         }
     });
+}
 
+exports.getLast = (req, res) => {
+    const queryDb = Insight.findOne().sort({ date: -1 }).limit(1);
+    queryDb.exec((error, insight) => {
+        if (!error && insight !== null) {
+            res.json(insight.getInfo());
+        } 
+        else {
+            res.status(400).json({ message: "Insight not found" });;
+        }
+    });
 }
 
 getStatesInsights = async () => {
@@ -102,62 +114,17 @@ getStatesInsights = async () => {
 
 }
 
-getMaxCasesDay = (data) => {
-    let i = 0;
-    let maxCasesDay = data[0];
-
-    data.forEach((element, index) => {
-        if (element.newCases > maxCasesDay.newCases) {
-            maxCasesDay = element;
-            i = index;
-        };
-    });
-
-    return { i: i, maxCasesDay: maxCasesDay };
-
-}
-
 getBrazilDoubleCaseDays = async () => {
     const data = await Brazil.find().sort({ date: -1 }).exec();
     const totalCases = data[0].totalCases;
-
-    let doubleCasesDays = 0;
+    let doubleCasesDays = 1;
     const doubleFactor = totalCases / 2;
-
 
     data.slice(0, data.length).forEach(element => { if (element.totalCases > doubleFactor) doubleCasesDays++; });
     return { doubleCasesDays, lastFetch: data[0].date };
 }
 
-const processMessages = (data) => {
-
-    const {
-        brazilDoubleCasesDays,
-        greatestCasesOcurrenceIncreaseUf,
-        greatestCasesOcurrenceIncreaseRate,
-        greatestDeathOcurrenceIncreaseUf,
-        greatestDeathOcurrenceIncreaseRate,
-        greatestMortalityIncreaseUf,
-        greatestMortalityIncreaseRate,
-        lowestMortalityIncreaseUf,
-        lowestMortalityIncreaseRate,
-    } = data;
-
-    const baseMsg = (state, rate, metric, increase) => `${state} teve ${increase ? 'um aumento' : 'uma queda'} de ${rate.toFixed(2)}% na ${metric} de Covid-19 nos últimos 7 dias, ${increase ? 'o' : 'a'} maior do Brasil no período.`
-
-    const doubleCasesMsg = (days) => `O número de casos confirmados no Brasil está dobrando em ${days} dias.`
-
-    HandlerTwitter(doubleCasesMsg(brazilDoubleCasesDays));
-    HandlerTwitter(baseMsg(ufMap[greatestCasesOcurrenceIncreaseUf], greatestCasesOcurrenceIncreaseRate, 'ocorrência de casos', true));
-    HandlerTwitter(baseMsg(ufMap[greatestDeathOcurrenceIncreaseUf], greatestDeathOcurrenceIncreaseRate, 'ocorrência de mortes', true));
-    HandlerTwitter(baseMsg(ufMap[greatestMortalityIncreaseUf], greatestMortalityIncreaseRate, 'taxa de mortalidade', true));
-    HandlerTwitter(baseMsg(ufMap[lowestMortalityIncreaseUf], Math.abs(lowestMortalityIncreaseRate), 'taxa de mortalidade', false));
-}
-
-
-
-exports.updateInsights = async () => {
-
+exports.update = async () => {
     const { doubleCasesDays, lastFetch } = await getBrazilDoubleCaseDays();
     const { greatestCasesIncrease, greatestDeathsIncrease, greatestMortalityVariation, lowestMortalityVariation } = await getStatesInsights();
 
@@ -182,15 +149,13 @@ exports.updateInsights = async () => {
     newInsight.save(async (error) => {
 
         if (error) {
-            console.log(error, 'Fail to Save Insight')
+            console.log(error, 'Fail to Save Insight');
         }
 
         else {
             console.log(`Insight saved with sucess ${new Date()}`);
             processMessages(data);
         }
-
-
 
     });
 

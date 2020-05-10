@@ -11,14 +11,13 @@ const processMessages = (total, record, type) => {
 
 exports.getTimeline = (req, res) => {
 
-
     const queryDb = Timeline.find().sort({ date: 1 });
 
     queryDb.exec((error, timeline) => {
 
         if (!error && timeline !== null) {
 
-            res.json({ content: timeline.map(element => element.getInfo()) });
+            res.json(timeline.map(element => element.getInfo()));
 
 
         } else {

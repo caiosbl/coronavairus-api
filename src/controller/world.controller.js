@@ -6,10 +6,7 @@ const ToNumber = Utils.toNumber;
 
 const queryString = require('query-string');
 
-
-
-
-exports.updateLive = async () => {
+exports.update = async () => {
 
     const req = await ApiCoronaLive.get("/worldstat.php");
 
@@ -69,20 +66,10 @@ exports.updateLive = async () => {
                 console.log("World data saved")
             }
         })
-
-
-
     }
     catch (e) {
         console.log(e);
     }
-
-
-
-
-
-
-
 }
 
 exports.getTimeSeries = (req, res) => {
@@ -93,9 +80,7 @@ exports.getTimeSeries = (req, res) => {
 
         if (!error && world !== null) {
 
-            res.json({
-                content: world.map(element => element.getInfo())
-            });
+            res.json(world.map(element => element.getInfo()));
 
 
         } else {
@@ -117,7 +102,7 @@ exports.getLastData = (req, res) => {
 
         if (!error && world !== null) {
 
-            res.json({ content: world.getInfo() });
+            res.json(world.getInfo());
 
 
         } else {

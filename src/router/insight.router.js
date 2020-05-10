@@ -4,8 +4,8 @@ const router = express.Router();
 const insightController = require('../controller/insight.controller');
 
 
-router.get('/', insightController.getAllInsights);
-router.get('/last', insightController.getLastInsights);
+router.get('/', insightController.getAll);
+router.get('/last', insightController.getLast);
 
 
 module.exports = router;

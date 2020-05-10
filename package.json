@@ -6,7 +6,8 @@
   "author": "Caio Sanches",
   "license": "MIT",
   "scripts": {
-    "start": "node app.js"
+    "start": "node app.js",
+    "test": "NODE_ENV=test nodemon app.js"
   },
   "homepage": "https://github.com/caiosbl/coronavairus-api#readme",
   "repository": {
@@ -28,9 +29,11 @@
     "lzwcompress": "^0.5.14",
     "mongoose": "^5.9.7",
     "morgan": "~1.9.1",
+    "nodemon": "^2.0.3",
     "pug": "2.0.0-beta11",
     "query-string": "^6.11.1",
     "readme-md-generator": "^1.0.0",
+    "request": "^2.88.2",
     "twit": "^2.2.11"
   }
 }

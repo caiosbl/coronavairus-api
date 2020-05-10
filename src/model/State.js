@@ -1,5 +1,7 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
+const Utils = require('../utils/utils');
+const sortByDate = Utils.sortByDate;
 
 
 var State = new Schema({
@@ -17,8 +19,7 @@ var State = new Schema({
 
     uid: {
         type: Number,
-        required: false,
-        unique: true
+        required: false
     },
 
     data: {
@@ -45,16 +46,19 @@ var State = new Schema({
 
 State.methods.createState = function createState(req) {
 
+
     let name = req.name;
     let uf = req.uf;
     let uid = req.uid;
     let data = req.data;
-
+    let latest = req.latest;
 
     this.name = name;
     this.uf = uf;
     this.uid = uid;
     this.data = data;
+    this.latest = latest;
+    if (uid) this.uid = uid;
 
 }
 
@@ -69,15 +73,29 @@ State.methods.getInfo = function getInfo() {
     }
 }
 
-State.methods.getId = function getId() {
-    return this._id;
-};
 
-State.methods.getData = function getData() {
-    return this.data;
-};
+State.methods.getLastData = function getInfo() {
+    return {
+        name: this.name,
+        uf: this.uf,
+        latest: this.latest,
+    }
+}
 
-State.methods.setData = function setData(newData) {
+
+State.methods.getTimeseries = function getTimeSeries() {
+
+    let data = Object.values(this.data);
+
+    return {
+        name: this.name,
+        uf: this.uf,
+        data: data.sort(sortByDate('date', false)),
+        latest: this.latest
+    }
+}
+
+State.methods.updateData = function updateData(newData) {
     this.data[newData.date] = newData;
     this.latest = newData;
 };

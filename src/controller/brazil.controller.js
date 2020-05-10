@@ -7,10 +7,7 @@ const Utils = require('../utils/utils');
 const ToNumber = Utils.toNumber;
 const { parse } = require('json2csv');
 
-const queryString = require('query-string');
-
-
-
+/*
 exports.update = async () => {
 
     const req = await ApiBrazilByDay.get("");
@@ -76,9 +73,9 @@ exports.update = async () => {
 
 }
 
+*/
 
-
-exports.updateLive = async () => {
+exports.update = async () => {
 
     const req = await ApiCoronaLive.get("/cases_by_country.php");
 
@@ -152,12 +149,6 @@ exports.updateLive = async () => {
         console.log(e);
     }
 
-
-
-
-
-
-
 }
 
 exports.getTimeSeries = (req, res) => {
@@ -168,9 +159,7 @@ exports.getTimeSeries = (req, res) => {
 
         if (!error && brazil !== null) {
 
-            res.json({
-                content: brazil.map(element => element.getInfo())
-            });
+            res.json(brazil.map(element => element.getInfo()));
 
 
         } else {
@@ -219,7 +208,7 @@ exports.getLastData = (req, res) => {
 
         if (!error && brazil !== null) {
 
-            res.json({ content: brazil.getInfo() });
+            res.json(brazil.getInfo());
 
 
         } else {
@@ -230,6 +219,4 @@ exports.getLastData = (req, res) => {
     });
 
 }
-
-
 

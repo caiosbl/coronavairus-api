@@ -2,7 +2,7 @@ const Test = require('../model/Test');
 const Apis = require('../utils/apis');
 const ApiTests = Apis.ApiTests;
 
-exports.getAllTests = (req, res) => {
+exports.getAll = (req, res) => {
 
     const queryDb = Test.find().sort({ "uf": 1 });
 
@@ -10,9 +10,7 @@ exports.getAllTests = (req, res) => {
 
         if (!error && test !== null) {
 
-            res.json({
-                content: test.map(element => element.getInfo())
-            });
+            res.json(test.map(element => element.getInfo()));
 
 
         } else {
@@ -24,11 +22,11 @@ exports.getAllTests = (req, res) => {
 
 }
 
-exports.getTestByUf = (req, res) => {
+exports.getByUf = (req, res) => {
 
     const uf = req.params.uf;
 
-    const queryDb = Test.findOne({ uf: uf });
+    const queryDb = Test.findOne({ uf: uf.toUpperCase() });
 
     queryDb.exec((error, test) => {
 
@@ -44,7 +42,7 @@ exports.getTestByUf = (req, res) => {
 
 }
 
-exports.updateTests = () => {
+exports.update = () => {
 
     ApiTests.get("").then(res => {
 
@@ -79,7 +77,7 @@ exports.updateTests = () => {
 
                     await test.save(function (err, testFounded) {
                         if (err) return console.error(err);
-                        else console.log(`Tests data from ${test.uf} Updated with sucess \n ${JSON.stringify(testFounded.getInfo())}`)
+                        else console.log(`Tests data from ${test.uf} Updated with sucess`)
                     });
 
                 }
@@ -98,7 +96,7 @@ exports.updateTests = () => {
 }
 
 
-exports.initTests = () => {
+exports.init = () => {
 
     ApiTests.get("").then(res => {
 

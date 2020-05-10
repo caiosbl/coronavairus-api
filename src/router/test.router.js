@@ -4,8 +4,8 @@ const router = express.Router();
 const testController = require('../controller/test.controller');
 
 
-router.get('/', testController.getAllTests);
-router.get('/uf/:uf', testController.getTestByUf);
+router.get('/', testController.getAll);
+router.get('/uf/:uf', testController.getByUf);
 
 
 module.exports = router;
