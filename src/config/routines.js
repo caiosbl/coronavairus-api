@@ -15,7 +15,7 @@ const updateBrazilLive = BrazilController.update;
 const updateWorldLive = WorldController.update;
 const updatePredictions = PredictionController.update;
 const updateCountry = CountryController.update;
-const updateTests = TestController.updateTests;
+const updateTests = TestController.update;
 const updateInsights = InsightController.update;
 const updateTimeline = TimelineController.update;
 
@@ -40,7 +40,7 @@ const init = () => {
 const update = () => {
     updateBrazilLive();
     updateWorldLive();
-    //updateNews();
+    updateNews();
     updateStates();
     updatePredictions();
     updateCountry();
