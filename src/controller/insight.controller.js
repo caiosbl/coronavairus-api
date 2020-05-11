@@ -121,7 +121,7 @@ getStatesInsights = async () => {
 getBrazilDoubleCaseDays = async () => {
     const data = await Brazil.find().sort({ date: -1 }).exec();
     const totalCases = data[0].totalCases;
-    let doubleCasesDays = 1;
+    let doubleCasesDays = 0;
     const doubleFactor = totalCases / 2;
 
     data.slice(0, data.length).forEach(element => { if (element.totalCases > doubleFactor) doubleCasesDays++; });
