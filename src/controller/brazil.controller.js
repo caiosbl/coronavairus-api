@@ -79,26 +79,26 @@ exports.update = async () => {
 
     const req = await ApiCoronaLive.get("/cases_by_country.php");
 
-    const reqBrazil = await ApiBrazil.get("PortalAcumulo");
+    const reqBrazil = await ApiBrazil.get("PortalGeralApi");
 
 
     try {
         const reqData = req.data.countries_stat.filter(country => country.country_name === 'Brazil')[0];
         const reqTime = req.data.statistic_taken_at;
-        const reqDataMinSaude = reqBrazil.data.results;
+        const reqDataMinSaude = reqBrazil.data;
 
 
 
 
         const data = {
-            totalCases: reqDataMinSaude.slice(-1)[0]['qtd_confirmado'],
-            newCases: reqDataMinSaude.slice(-1)[0]['qtd_confirmado'] - reqDataMinSaude.slice(-2)[0]['qtd_confirmado'],
-            activeCases: ToNumber(reqData.active_cases),
-            totalDeaths: reqDataMinSaude.slice(-1)[0]['qtd_obito'],
-            newDeaths:reqDataMinSaude.slice(-1)[0]['qtd_obito'] - reqDataMinSaude.slice(-2)[0]['qtd_obito'],
-            totalRecovered: ToNumber(reqData.total_recovered),
+            totalCases: ToNumber(reqDataMinSaude.confirmados.total),
+            newCases: ToNumber(reqDataMinSaude.confirmados.novos),
+            activeCases: ToNumber(reqDataMinSaude.confirmados.acompanhamento),
+            totalDeaths: ToNumber(reqDataMinSaude.obitos.total),
+            newDeaths: ToNumber(reqDataMinSaude.obitos.novos),
+            totalRecovered: ToNumber(reqDataMinSaude.confirmados.recuperados),
             seriousCritical: ToNumber(reqData.serious_critical),
-            date: `${reqDataMinSaude.slice(-1)[0]['updatedAt'].slice(0, 10)}T00:00:00.000+00:00`
+            date: `${reqDataMinSaude['dt_updated'].slice(0, 10)}T00:00:00.000+00:00`
         };
 
         let newBrazilData = new Brazil();

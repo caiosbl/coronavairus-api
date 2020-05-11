@@ -64,5 +64,5 @@ const update = () => {
 //populateStateFromCsv();
 //initStates();
 
-update();
+updateBrazilLive();
 

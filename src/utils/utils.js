@@ -1,4 +1,4 @@
-exports.toNumber = (string) => Number(string.split(",").join(""));
+exports.toNumber = (string) => Number(String(string).split(",").join(""));
 exports.sortByDate = (key, ascedent = false) => {
 
     const comparator = ascedent ? -1 : 1;
