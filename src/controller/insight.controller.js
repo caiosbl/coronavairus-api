@@ -3,6 +3,9 @@ const Brazil = require('../model/Brazil');
 const State = require('../model/State');
 const HandlerTwitter = require('../utils/twitter').postMessage;
 const ufMap = require('../utils/states.name.map');
+const Utils = require('../utils/utils');
+const sortByDate = Utils.sortByDate;
+
 
 
 
@@ -64,8 +67,8 @@ exports.getLast = (req, res) => {
 
 getStatesInsights = async () => {
     const data = await State.find().exec();
-    const actualWeek = data.map(state => { return { uf: state.uf, name: state.name, data: Object.values(state.data).reverse().slice(0, 7) } });
-    const lastWeek = data.map(state => { return { uf: state.uf, name: state.name, data: Object.values(state.data).reverse().slice(7, 14) } });
+    const actualWeek = data.map(state => { return { uf: state.uf, name: state.name, data: Object.values(state.data).sort(sortByDate('date',true)).slice(0, 7) } });
+    const lastWeek = data.map(state => { return { uf: state.uf, name: state.name, data: Object.values(state.data).sort(sortByDate('date',true)).slice(7, 14) } });
 
     const actualWeekSum = actualWeek.map(element => {
         const casesSum = element.data[0].cases - element.data[6].cases;
@@ -94,6 +97,7 @@ getStatesInsights = async () => {
 
         return { name: element.name, uf: element.uf, casesIncrease: casesIncrease, deathsIncrease: deathsIncrease, mortalityVariation: mortalityVariation };
     });
+
 
 
     const greatestCasesIncreaseValue = Math.max(...weeksComparate.map(state => state.casesIncrease));

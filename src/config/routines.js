@@ -65,3 +65,4 @@ const update = () => {
 //initStates();
 
 update();
+
