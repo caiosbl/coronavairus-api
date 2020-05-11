@@ -24,10 +24,10 @@ const processMessages = async (data) => {
             const today = element;
 
             const yesterday = Object.values(yesterdayData.data).slice(-2)[0];
-            const cases = today.qtd_confirmado;
-            const deaths = today.qtd_obito;
-            const newCases = today.qtd_confirmado - yesterday.cases;
-            const newDeaths = today.qtd_obito - yesterday.deaths;
+            const cases = today.casosAcumulado;
+            const deaths = today.obitosAcumulado;
+            const newCases = today.casosAcumulado - yesterday.cases;
+            const newDeaths = today.obitosAcumulado - yesterday.deaths;
             const baseMsg = `${element.nome} teve ${newCases} novos casos e ${newDeaths} mortes por Covid-19 confirmados hoje, no total o estado acumula ${cases} casos e ${deaths} mortes`
 
             HandlerTwitter(baseMsg);
@@ -45,22 +45,22 @@ const processMessages = async (data) => {
 
 exports.updateStates = async () => {
 
-    ApiBrazil.get("PortalMapa").then(res => {
+    ApiBrazil.get("PortalEstado").then(res => {
 
         console.log(`Starting to Update States - ${new Date()}`);
 
-        processMessages(res.data.results);
+        processMessages(res.data);
 
-        res.data.results.forEach(async (element, index) => {
+        res.data.forEach(async (element, index) => {
 
-            const date = new Date(element.updatedAt);
+            const date = new Date();
             const dateFormatted = `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`
 
-            const data = { date: dateFormatted, cases: element.qtd_confirmado, deaths: element.qtd_obito, suspects: 0, refuses: 0 }
+            const data = { date: dateFormatted, cases: element.casosAcumulado, deaths: element.obitosAcumulado, suspects: 0, refuses: 0 }
 
-            const state = await State.findOne({ uf: ufMap[element.objectId] });
+            const state = await State.findOne({ uf: element.nome });
 
-            if (!state) console.log("State not found - ", ufMap[element.objectId]);
+            if (!state) console.log("State not found - ", element.nome);
 
             else {
 
