@@ -67,4 +67,4 @@ const update = () => {
 
 //update();
 
-updateStates();
+update();
