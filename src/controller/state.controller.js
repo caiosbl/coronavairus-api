@@ -24,7 +24,6 @@ const processMessages = async (data) => {
             const yesterdayData = await State.findOne({ name: element.nome });
 
             const today = element;
-
             const yesterday = Object.values(yesterdayData.data).slice(-2)[0];
             const cases = today.casosAcumulado;
             const deaths = today.obitosAcumulado;
@@ -70,8 +69,7 @@ exports.updateStates = async () => {
             const state = await State.findOne({ uf: element.nome });
             const date = new Date();
 
-            const isNewDayData = element.casosAcumulado !== Object.values(state.data).sort(sortByDate('date', true)).slice(-1)[0].cases;
-            if (!isNewDayData) date.setDate(date.getDate() - 1);
+          
 
             const dateFormatted = `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`
 

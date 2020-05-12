@@ -87,20 +87,20 @@ exports.update = async () => {
         const reqTime = req.data.statistic_taken_at;
         const reqDataMinSaude = reqBrazil.data;
 
-
-
-
         const data = {
             totalCases: ToNumber(reqDataMinSaude.confirmados.total),
             newCases: ToNumber(reqDataMinSaude.confirmados.novos),
-            activeCases: ToNumber(reqDataMinSaude.confirmados.acompanhamento),
+            activeCases: ToNumber(reqData.active_cases),
             totalDeaths: ToNumber(reqDataMinSaude.obitos.total),
             newDeaths: ToNumber(reqDataMinSaude.obitos.novos),
-            totalRecovered: ToNumber(reqDataMinSaude.confirmados.recuperados),
+            totalRecovered: ToNumber(reqData.total_recovered),
             seriousCritical: ToNumber(reqData.serious_critical),
             date: `${reqDataMinSaude['dt_updated'].slice(0, 10)}T00:00:00.000+00:00`
         };
 
+
+
+       
         let newBrazilData = new Brazil();
 
        
