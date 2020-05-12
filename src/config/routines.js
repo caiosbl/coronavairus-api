@@ -10,6 +10,7 @@ const TimelineController = require('../controller/timeline.controller');
 
 
 const updateStates = StateController.updateStates;
+const removeStateDate = StateController.removeDate;
 const updateNews = NewsController.updateNews;
 const updateBrazilLive = BrazilController.update;
 const updateWorldLive = WorldController.update;
@@ -65,4 +66,5 @@ const update = () => {
 //initStates();
 
 update();
+
 

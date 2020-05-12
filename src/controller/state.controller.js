@@ -7,6 +7,8 @@ const HandlerTwitter = require('../utils/twitter').postMessage;
 const BotRecord = require('../model/BotRecord');
 const csv = require('csvtojson');
 const ufMapName = require('../utils/states.name.map');
+const Utils = require('../utils/utils');
+const sortByDate = Utils.sortByDate;
 
 const processMessages = async (data) => {
     const lastBotRecord = await BotRecord.findOne();
@@ -41,7 +43,19 @@ const processMessages = async (data) => {
 
 }
 
+exports.removeDate = async (date) => {
+    const state = await State.find();
 
+    state.forEach(async(element) => {
+        element.removeKey(date);
+        element.markModified("data");
+
+        await element.save(function (err, state) {
+            if (err) return console.error(err);
+            else console.log(`State ${state.uf} Updated with sucess`)
+        });
+    })
+}
 
 exports.updateStates = async () => {
 
@@ -53,12 +67,15 @@ exports.updateStates = async () => {
 
         res.data.forEach(async (element, index) => {
 
+            const state = await State.findOne({ uf: element.nome });
             const date = new Date();
+
+            const isNewDayData = element.casosAcumulado !== Object.values(element.data).sort(sortByDate('key', true)).slice(-1)[0].cases;
+            if (!isNewDayData) date.setDate(date.getDate() - 1);
+
             const dateFormatted = `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`
 
             const data = { date: dateFormatted, cases: element.casosAcumulado, deaths: element.obitosAcumulado, suspects: 0, refuses: 0 }
-
-            const state = await State.findOne({ uf: element.nome });
 
             if (!state) console.log("State not found - ", element.nome);
 
@@ -113,7 +130,7 @@ exports.getTimeseriesByUf = (req, res) => {
 
     const uf = req.params.uf;
 
-    const queryDb = State.findOne({uf: uf.toUpperCase()});
+    const queryDb = State.findOne({ uf: uf.toUpperCase() });
 
     queryDb.exec((error, state) => {
 
@@ -251,7 +268,7 @@ exports.populateFromCsv = async () => {
 
         else {
             try {
-                stateFounded.data[element.date] = {date: element.date, newCases: element.newCases, newDeaths: element.newDeaths, cases: element.cases, deaths: element.deaths};
+                stateFounded.data[element.date] = { date: element.date, newCases: element.newCases, newDeaths: element.newDeaths, cases: element.cases, deaths: element.deaths };
             }
             catch (e) {
                 console.log(e);
