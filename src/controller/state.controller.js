@@ -70,7 +70,7 @@ exports.updateStates = async () => {
             const state = await State.findOne({ uf: element.nome });
             const date = new Date();
 
-            const isNewDayData = element.casosAcumulado !== Object.values(element.data).sort(sortByDate('key', true)).slice(-1)[0].cases;
+            const isNewDayData = element.casosAcumulado !== Object.values(state.data).sort(sortByDate('date', true)).slice(-1)[0].cases;
             if (!isNewDayData) date.setDate(date.getDate() - 1);
 
             const dateFormatted = `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`
