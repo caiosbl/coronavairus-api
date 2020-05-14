@@ -23,6 +23,7 @@ const updateTimeline = TimelineController.update;
 const initCountries = CountryController.init;
 const initStates = StateController.init;
 const initTests = TestController.init;
+const lsi = StateController.testLsi;
 
 const populateStateFromCsv = StateController.populateFromCsv;
 
@@ -61,10 +62,6 @@ const update = () => {
 }
 
 
-
-//populateStateFromCsv();
-//initStates();
-
-update();
+updateStates();
 
 

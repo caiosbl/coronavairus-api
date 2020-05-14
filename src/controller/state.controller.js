@@ -57,21 +57,20 @@ exports.removeDate = async (date) => {
 }
 
 exports.updateStates = async () => {
+    const reqBrazil = await ApiBrazil.get("PortalGeralApi");
 
     ApiBrazil.get("PortalEstado").then(res => {
 
         console.log(`Starting to Update States - ${new Date()}`);
 
-        processMessages(res.data);
+       processMessages(res.data);
 
         res.data.forEach(async (element, index) => {
 
             const state = await State.findOne({ uf: element.nome });
-            const date = new Date();
-
-          
-
+            const date = new Date(`${reqBrazil.data['dt_updated'].slice(0, 10)}T00:00:00.000-03:00`);
             const dateFormatted = `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`
+       
 
             const data = { date: dateFormatted, cases: element.casosAcumulado, deaths: element.obitosAcumulado, suspects: 0, refuses: 0 }
 
