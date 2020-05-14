@@ -10,7 +10,6 @@ const TimelineController = require('../controller/timeline.controller');
 
 
 const updateStates = StateController.updateStates;
-const removeStateDate = StateController.removeDate;
 const updateNews = NewsController.updateNews;
 const updateBrazilLive = BrazilController.update;
 const updateWorldLive = WorldController.update;
@@ -23,9 +22,9 @@ const updateTimeline = TimelineController.update;
 const initCountries = CountryController.init;
 const initStates = StateController.init;
 const initTests = TestController.init;
-const lsi = StateController.testLsi;
 
-const populateStateFromCsv = StateController.populateFromCsv;
+
+
 
 const UPDATE_NEWS_INTERVAL = process.env.UPDATE_NEWS_INTERVAL;
 const UPDATE_PREDICTIONS_INTERVAL = process.env.UPDATE__PREDICTIONS_INTERVAL;
@@ -62,6 +61,6 @@ const update = () => {
 }
 
 
-updateStates();
+update();
 
 
