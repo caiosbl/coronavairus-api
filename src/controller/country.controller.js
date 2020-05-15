@@ -20,7 +20,7 @@ exports.update = async () => {
         seriousCritical: element.serious_critical,
         lastFetch: req.data.statistic_taken_at
     };
-    console.log(element)
+    
 
             const actualData = Country.findOne({ name: data.name });
 
