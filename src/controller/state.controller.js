@@ -21,7 +21,7 @@ const processMessages = async (data) => {
     if (canTweet) {
         data.forEach(async (element) => {
 
-            const yesterdayData = await State.findOne({ name: element.nome });
+            const yesterdayData = await State.findOne({ uf: element.nome });
 
             const today = element;
             const yesterday = Object.values(yesterdayData.data).slice(-2)[0];
