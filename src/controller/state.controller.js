@@ -29,7 +29,7 @@ const processMessages = async (data) => {
             const deaths = today.obitosAcumulado;
             const newCases = today.casosAcumulado - yesterday.cases;
             const newDeaths = today.obitosAcumulado - yesterday.deaths;
-            const baseMsg = `${element.nome} teve ${newCases} novos casos e ${newDeaths} mortes por Covid-19 confirmados hoje, no total o estado acumula ${cases} casos e ${deaths} mortes`
+            const baseMsg = `${ufMapName[element.nome]} teve ${newCases} novos casos e ${newDeaths} mortes por Covid-19 confirmados hoje, no total o estado acumula ${cases} casos e ${deaths} mortes`
 
             HandlerTwitter(baseMsg);
 

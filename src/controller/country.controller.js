@@ -20,14 +20,14 @@ exports.update = async () => {
         seriousCritical: element.serious_critical,
         lastFetch: req.data.statistic_taken_at
     };
-
+    console.log(element)
 
             const actualData = Country.findOne({ name: data.name });
 
             actualData.exec(async (error, dataFounded) => {
 
 
-                if (!dataFounded) console.log("Date not Found - ", data.date);
+                if (!dataFounded) console.log("Data not Found - ", data.date);
                 else {
 
                     try {
@@ -126,6 +126,8 @@ exports.init = async () => {
         lastFetch: req.data.Date
     };
 
+   
+
 
     let newCountryData = new Country();
     newCountryData.createCountryData(data);
@@ -139,7 +141,7 @@ exports.init = async () => {
             actualData.exec(async (error, dataFounded) => {
 
 
-                if (!dataFounded) console.log("Date not Found - ", data.date);
+                if (!dataFounded) console.log("Data not Found - ", data.date);
                 else {
 
                     try {
