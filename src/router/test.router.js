@@ -5,6 +5,7 @@ const testController = require('../controller/test.controller');
 
 
 router.get('/', testController.getAll);
+router.get('/last', testController.getLastData);
 router.get('/uf/:uf', testController.getByUf);
 
 

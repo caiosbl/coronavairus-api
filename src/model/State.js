@@ -75,10 +75,23 @@ State.methods.getInfo = function getInfo() {
 
 
 State.methods.getLastData = function getInfo() {
+
+
+    const yesterdayData = Object.values(this.data).sort(sortByDate('date')).slice(-2)[0];
+    const newCases = this.latest.cases - yesterdayData.cases;
+    const newDeaths = this.latest.deaths - yesterdayData.deaths;
+    const mortalityRate = (this.latest.deaths / this.latest.cases) * 100;
+    const yesterdayMortalityRate =  (yesterdayData.deaths / yesterdayData.cases) * 100;
+    const deltaMortalityRate =  mortalityRate - yesterdayMortalityRate;
+
     return {
         name: this.name,
         uf: this.uf,
-        latest: this.latest,
+        newCases: newCases,
+        newDeaths: newDeaths,
+        mortalityRate: mortalityRate,
+        deltaMortalityRate: deltaMortalityRate,
+        ...this.latest,
     }
 }
 

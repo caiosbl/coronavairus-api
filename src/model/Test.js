@@ -31,6 +31,14 @@ test.methods.getInfo = function getInfo() {
     }
 }
 
+test.methods.getLastData = function getLatestData() {
+    return {
+        uf: this.uf,
+        ...this.latest
+    }
+}
+
+
 /**
  * 
  * @constructor 

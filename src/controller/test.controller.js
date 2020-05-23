@@ -22,6 +22,26 @@ exports.getAll = (req, res) => {
 
 }
 
+exports.getLastData = (req, res) => {
+
+    const queryDb = Test.find().sort({ "uf": 1 });
+
+    queryDb.exec((error, test) => {
+
+        if (!error && test !== null) {
+
+            res.json(test.map(element => element.getLastData()));
+
+
+        } else {
+
+            res.status(400).json({ message: "Fail to get Tests" });;
+
+        }
+    });
+
+}
+
 exports.getByUf = (req, res) => {
 
     const uf = req.params.uf;
