@@ -60,5 +60,5 @@ const update = () => {
     setInterval(updateTimeline, UPDATE_INTERVAL);
 }
 
-update();
+//update();
 
