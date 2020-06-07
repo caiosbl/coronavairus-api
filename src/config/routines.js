@@ -62,3 +62,5 @@ const update = () => {
 
 //update();
 
+updateBrazilLive();
+setInterval(updateBrazilLive, UPDATE_INTERVAL);

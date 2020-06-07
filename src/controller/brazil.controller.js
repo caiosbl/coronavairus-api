@@ -75,79 +75,98 @@ exports.update = async () => {
 
 */
 
+const formatDay = (day) => String(day).length < 2 ? `0${day}` : day;
+
 exports.update = async () => {
 
     const req = await ApiCoronaLive.get("/cases_by_country.php");
 
     const reqBrazil = await ApiBrazil.get("PortalGeralApi");
+    const queryBd = Brazil.find().sort({ date: -1 }).limit(2);
+    const seriesData = await queryBd.exec((error, serie) => {
+
+        if (error) console.log('Fail to get Brazil Series Data');
+        else {
+            try {
 
 
-    try {
-        const reqData = req.data.countries_stat.filter(country => country.country_name === 'Brazil')[0];
-        const reqTime = req.data.statistic_taken_at;
-        const reqDataMinSaude = reqBrazil.data;
-
-        const data = {
-            totalCases: ToNumber(reqDataMinSaude.confirmados.total),
-            newCases: ToNumber(reqDataMinSaude.confirmados.novos),
-            activeCases: ToNumber(reqData.active_cases),
-            totalDeaths: ToNumber(reqDataMinSaude.obitos.total),
-            newDeaths: ToNumber(reqDataMinSaude.obitos.novos),
-            totalRecovered: ToNumber(reqData.total_recovered),
-            seriousCritical: ToNumber(reqData.serious_critical),
-            date: `${reqDataMinSaude['dt_updated'].slice(0, 10)}T00:00:00.000+00:00`
-        };
+                const reqData = req.data.countries_stat.filter(country => country.country_name === 'Brazil')[0];
+                const reqDataMinSaude = reqBrazil.data;
 
 
 
-       
-        let newBrazilData = new Brazil();
+                const today = `${reqDataMinSaude['dt_updated'].slice(0, 10)}T00:00:00.000+00:00`;
+                const yesterday = new Date(serie[0].date).getDate() === new Date(today).getDate() ? serie[1] : serie[0];
 
-       
-        newBrazilData.createBrazilData(data);
+                const totalCases = yesterday.totalCases + ToNumber(reqDataMinSaude.confirmados.novos);
+                const totalDeaths = yesterday.totalDeaths + ToNumber(reqDataMinSaude.obitos.novos);
 
-        newBrazilData.save(async (error) => {
+                const data = {
+                    totalCases: totalCases,
+                    newCases: ToNumber(reqDataMinSaude.confirmados.novos),
+                    activeCases: ToNumber(reqData.active_cases),
+                    totalDeaths: totalDeaths,
+                    newDeaths: ToNumber(reqDataMinSaude.obitos.novos),
+                    totalRecovered: ToNumber(reqData.total_recovered),
+                    seriousCritical: ToNumber(reqData.serious_critical),
+                    date: today
 
-            if (error) {
-
-                const actualData = Brazil.findOne().sort({ date: -1 }).limit(1);
-
-                actualData.exec(async (error, dataFounded) => {
+                };
 
 
-                    if (!dataFounded) console.log("Date not Found - ", data.date);
-                    else {
 
-                        try {
+                let newBrazilData = new Brazil();
 
-                            dataFounded.updateBrazilData(data);
 
-                            await dataFounded.save(function (err, status) {
-                                if (err) return console.error(err, 'erro');
-                            });
+                newBrazilData.createBrazilData(data);
 
-                            return console.log("Brazil Data updated with sucess");
-                        }
-                        catch (e) {
-                            console.log("Fail to update Brazil Data", e);
-                        }
+                newBrazilData.save(async (error) => {
+
+                    if (error) {
+
+                        const actualData = Brazil.findOne().sort({ date: -1 }).limit(1);
+
+                        actualData.exec(async (error, dataFounded) => {
+
+
+                            if (!dataFounded) console.log("Date not Found - ", data.date);
+                            else {
+
+                                try {
+
+                                    dataFounded.updateBrazilData(data);
+
+                                    await dataFounded.save(function (err, status) {
+                                        if (err) return console.error(err, 'erro');
+                                    });
+
+                                    return console.log("Brazil Data updated with sucess");
+                                }
+                                catch (e) {
+                                    console.log("Fail to update Brazil Data", e);
+                                }
+                            }
+
+                        })
+
                     }
 
+                    else {
+                        console.log("Brazil data saved")
+                    }
                 })
 
             }
-
-            else {
-                console.log("Brazil data saved")
+            catch (e) {
+                console.log(e);
             }
-        })
+
+        }
 
 
 
-    }
-    catch (e) {
-        console.log(e);
-    }
+
+    })
 
 }
 
@@ -187,7 +206,7 @@ exports.getTimeSeriesCSV = (req, res) => {
             const csv = parse(data, opts);
             res.attachment('brazil-covid-timeseries.csv');
             res.status(200).send(csv);
-      
+
 
         } else {
 
