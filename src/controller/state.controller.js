@@ -11,6 +11,7 @@ const Utils = require('../utils/utils');
 const sortByDate = Utils.sortByDate;
 
 const processMessages = async (data) => {
+
     const lastBotRecord = await BotRecord.findOne();
     const canRegisterToday = new Date(lastBotRecord.statesRecord).getDate() !== new Date().getDate();
     const lastState = await State.findOne().sort({ "latest.date": -1 });
@@ -21,15 +22,13 @@ const processMessages = async (data) => {
     if (canTweet) {
         data.forEach(async (element) => {
 
-            const yesterdayData = await State.findOne({ uf: element.nome });
-
             const today = element;
-            const yesterday = Object.values(yesterdayData.data).slice(-2)[0];
-            const cases = today.casosAcumulado;
-            const deaths = today.obitosAcumulado;
-            const newCases = today.casosAcumulado - yesterday.cases;
-            const newDeaths = today.obitosAcumulado - yesterday.deaths;
-            const baseMsg = `${ufMapName[element.nome]} teve ${newCases} novos casos e ${newDeaths} mortes por Covid-19 confirmados hoje, no total o estado acumula ${cases} casos e ${deaths} mortes`
+
+            const cases = today.cases;
+            const deaths = today.deaths;
+            const newCases = today.newCases;
+            const newDeaths = today.newDeaths;
+            const baseMsg = `${ufMapName[element.uf]} teve ${newCases} novos casos e ${newDeaths} mortes por Covid-19 confirmados hoje, no total o estado acumula ${cases} casos e ${deaths} mortes`
 
             HandlerTwitter(baseMsg);
 
@@ -45,7 +44,7 @@ const processMessages = async (data) => {
 exports.removeDate = async (date) => {
     const state = await State.find();
 
-    state.forEach(async(element) => {
+    state.forEach(async (element) => {
         element.removeKey(date);
         element.markModified("data");
 
@@ -59,20 +58,41 @@ exports.removeDate = async (date) => {
 exports.updateStates = async () => {
     const reqBrazil = await ApiBrazil.get("PortalGeralApi");
 
-    ApiBrazil.get("PortalEstado").then(res => {
+    ApiBrazil.get("PortalSintese").then(res => {
 
         console.log(`Starting to Update States - ${new Date()}`);
 
-       processMessages(res.data);
+        let statesData = [];
 
-        res.data.forEach(async (element, index) => {
 
-            const state = await State.findOne({ uf: element.nome });
+        // Format States Data
+        res.data.forEach((element, index) => {
+            if (element._id !== "Brasil") {
+                statesData.push(...element.listaMunicipios);
+            }
+        })
+
+        let processedData = [];
+
+
+        statesData.forEach(async (element, index) => {
+
+            const state = await State.findOne({ uf: element._id });
             const date = new Date(`${reqBrazil.data['dt_updated'].slice(0, 10)}T00:00:00.000-03:00`);
-            const dateFormatted = `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`
-       
+            const dateFormatted = `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
 
-            const data = { date: dateFormatted, cases: element.casosAcumulado, deaths: element.obitosAcumulado, suspects: 0, refuses: 0 }
+
+            const dateOffset = (24 * 60 * 60 * 1000) * 1; //1 day
+            const yesterdayDate = new Date();
+            yesterdayDate.setTime(yesterdayDate.getTime() - dateOffset);
+
+            const yesterday = state.data[`${yesterdayDate.getDate()}/${yesterdayDate.getMonth() + 1}/${yesterdayDate.getFullYear()}`];
+
+            const cases = yesterday.cases + element.casosAcumuladoNovos;
+            const deaths = yesterday.deaths + element.obitosAcumuladoNovos;
+
+            const data = { date: dateFormatted, cases: cases, deaths: deaths, newCases: element.casosAcumuladoNovos, newDeaths: element.obitosAcumuladoNovos, suspects: 0, refuses: 0 };
+            processedData.push({ ...data, uf: element._id });
 
             if (!state) console.log("State not found - ", element.nome);
 
@@ -88,6 +108,7 @@ exports.updateStates = async () => {
                         else console.log(`State ${state.uf} Updated with sucess`)
                     });
 
+
                 }
                 catch (e) {
 
@@ -96,6 +117,8 @@ exports.updateStates = async () => {
             }
 
         });
+
+        processMessages(processedData);
 
     }).catch((e) => console.log(`Fail to Request to Brazil Api - Update States \n`, e));
 

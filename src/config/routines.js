@@ -60,7 +60,4 @@ const update = () => {
     setInterval(updateTimeline, UPDATE_INTERVAL);
 }
 
-//update();
-
-updateBrazilLive();
-setInterval(updateBrazilLive, UPDATE_INTERVAL);
+update();

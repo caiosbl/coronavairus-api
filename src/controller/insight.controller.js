@@ -54,8 +54,9 @@ exports.getAll = (req, res) => {
 }
 
 exports.getLast = (req, res) => {
-    const queryDb = Insight.findOne().sort({ date: -1 }).limit(1);
+    const queryDb = Insight.findOne().sort({ date: -1 });
     queryDb.exec((error, insight) => {
+
         if (!error && insight !== null) {
             res.json(insight.getInfo());
         } 
@@ -158,7 +159,7 @@ exports.update = async () => {
 
         else {
             console.log(`Insight saved with sucess ${new Date()}`);
-            processMessages(data);
+           processMessages(data);
         }
 
     });
