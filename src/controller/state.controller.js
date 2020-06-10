@@ -60,6 +60,7 @@ exports.updateStates = async () => {
 
     ApiBrazil.get("PortalSintese").then(res => {
 
+       
         console.log(`Starting to Update States - ${new Date()}`);
 
         let statesData = [];
@@ -67,15 +68,18 @@ exports.updateStates = async () => {
 
         // Format States Data
         res.data.forEach((element, index) => {
-            if (element._id !== "Brasil") {
+            if (element.regiao !== "Brasil") {
                 statesData.push(...element.listaMunicipios);
             }
         })
 
+
+     
         let processedData = [];
 
 
         statesData.forEach(async (element, index) => {
+      
 
             const state = await State.findOne({ uf: element._id });
             const date = new Date(`${reqBrazil.data['dt_updated'].slice(0, 10)}T00:00:00.000-03:00`);
@@ -88,10 +92,13 @@ exports.updateStates = async () => {
 
             const yesterday = state.data[`${yesterdayDate.getDate()}/${yesterdayDate.getMonth() + 1}/${yesterdayDate.getFullYear()}`];
 
-            const cases = yesterday.cases + element.casosAcumuladoNovos;
-            const deaths = yesterday.deaths + element.obitosAcumuladoNovos;
+            const cases = element.casosAcumulado;
+            const deaths = element.obitosAcumulado;
 
-            const data = { date: dateFormatted, cases: cases, deaths: deaths, newCases: element.casosAcumuladoNovos, newDeaths: element.obitosAcumuladoNovos, suspects: 0, refuses: 0 };
+            const newCases = cases  - yesterday.cases;
+            const newDeaths = deaths - yesterday.deaths;
+
+            const data = { date: dateFormatted, cases: cases, deaths: deaths, newCases: newCases, newDeaths: newDeaths, suspects: 0, refuses: 0 };
             processedData.push({ ...data, uf: element._id });
 
             if (!state) console.log("State not found - ", element.nome);
@@ -119,6 +126,93 @@ exports.updateStates = async () => {
         });
 
         processMessages(processedData);
+
+    }).catch((e) => console.log(`Fail to Request to Brazil Api - Update States \n`, e));
+
+}
+
+exports.mock = async () => {
+    const reqBrazil = await ApiBrazil.get("PortalGeralApi");
+
+    ApiBrazil.get("PortalSintese").then(res => {
+
+       
+        console.log(`Starting to Update States - ${new Date()}`);
+
+        let statesData = [];
+
+
+        // Format States Data
+        res.data.forEach((element, index) => {
+            if (element.regiao !== "Brasil") {
+                statesData.push(...element.listaMunicipios);
+            }
+        })
+
+
+     
+        let processedData = [];
+
+
+
+
+        statesData.forEach(async (element, index) => {
+      
+
+            const state = await State.findOne({ uf: element._id });
+         
+           
+
+
+            const dateOffset = (24 * 60 * 60 * 1000) * 1; //1 day
+           
+
+            const today = new Date();
+            today.setDate(9);
+            const date = new Date(`${today.getDate()}/${today.getMonth() + 1}/${today.getFullYear()}}T00:00:00.000-03:00`);
+            const dateFormatted = `9/6/2020`;
+            const yesterdayDate = new Date();
+            yesterdayDate.setDate(9);
+            yesterdayDate.setTime(yesterdayDate.getTime() - dateOffset);
+
+            const yesterday = state.data[`${8}/${yesterdayDate.getMonth() + 1}/${yesterdayDate.getFullYear()}`];
+
+        
+
+            const cases = element.casosAcumulado;
+            const deaths = element.obitosAcumulado;
+
+            const newCases = cases  - yesterday.cases;
+            const newDeaths = deaths - yesterday.deaths;
+
+            const data = { date: dateFormatted, cases: cases, deaths: deaths, newCases: newCases, newDeaths: newDeaths, suspects: 0, refuses: 0 };
+            processedData.push({ ...data, uf: element._id });
+
+            if (!state) console.log("State not found - ", element.nome);
+
+            else {
+
+                try {
+
+                    state.updateData(data);
+                    state.markModified("data");
+
+                    await state.save(function (err, state) {
+                        if (err) return console.error(err);
+                        else console.log(`State ${state.uf} Updated with sucess`)
+                    });
+
+
+                }
+                catch (e) {
+
+                    console.log(`Fail to Update State \n`, e);
+                }
+            }
+
+        });
+
+        //processMessages(processedData);
 
     }).catch((e) => console.log(`Fail to Request to Brazil Api - Update States \n`, e));
 

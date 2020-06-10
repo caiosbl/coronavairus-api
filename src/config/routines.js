@@ -22,7 +22,8 @@ const updateTimeline = TimelineController.update;
 const initCountries = CountryController.init;
 const initStates = StateController.init;
 const initTests = TestController.init;
-
+const mock = StateController.mock;
+const remove = StateController.removeDate;
 
 
 
@@ -61,3 +62,6 @@ const update = () => {
 }
 
 update();
+//updateStates();
+//mock();
+//remove("NaN/NaN/NaN")
