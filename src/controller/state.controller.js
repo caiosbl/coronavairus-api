@@ -132,8 +132,7 @@ exports.updateStates = async () => {
 }
 
 exports.mock = async () => {
-    const reqBrazil = await ApiBrazil.get("PortalGeralApi");
-
+  
     ApiBrazil.get("PortalSintese").then(res => {
 
        
@@ -162,28 +161,18 @@ exports.mock = async () => {
             const state = await State.findOne({ uf: element._id });
          
            
+          
+          
+            const dateFormatted = `8/6/2020`;
+            const yesterday = state.data[`7/6/2020`];
+            const today = state.data[`8/6/2020`];
 
+    
+            const cases = yesterday.cases + today.newCases;
+            const deaths = yesterday.deaths + today.deaths;
 
-            const dateOffset = (24 * 60 * 60 * 1000) * 1; //1 day
-           
-
-            const today = new Date();
-            today.setDate(9);
-            const date = new Date(`${today.getDate()}/${today.getMonth() + 1}/${today.getFullYear()}}T00:00:00.000-03:00`);
-            const dateFormatted = `9/6/2020`;
-            const yesterdayDate = new Date();
-            yesterdayDate.setDate(9);
-            yesterdayDate.setTime(yesterdayDate.getTime() - dateOffset);
-
-            const yesterday = state.data[`${8}/${yesterdayDate.getMonth() + 1}/${yesterdayDate.getFullYear()}`];
-
-        
-
-            const cases = element.casosAcumulado;
-            const deaths = element.obitosAcumulado;
-
-            const newCases = cases  - yesterday.cases;
-            const newDeaths = deaths - yesterday.deaths;
+            const newCases = today.newCases;
+            const newDeaths = today.newDeaths;
 
             const data = { date: dateFormatted, cases: cases, deaths: deaths, newCases: newCases, newDeaths: newDeaths, suspects: 0, refuses: 0 };
             processedData.push({ ...data, uf: element._id });

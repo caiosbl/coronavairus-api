@@ -98,8 +98,8 @@ exports.update = async () => {
                 const today = `${reqDataMinSaude['dt_updated'].slice(0, 10)}T00:00:00.000+00:00`;
                 const yesterday = new Date(serie[0].date).getDate() === new Date(today).getDate() ? serie[1] : serie[0];
 
-                const totalCases = yesterday.totalCases + ToNumber(reqDataMinSaude.confirmados.novos);
-                const totalDeaths = yesterday.totalDeaths + ToNumber(reqDataMinSaude.obitos.novos);
+                const totalCases =reqDataMinSaude.confirmados.total;
+                const totalDeaths = reqDataMinSaude.obitos.total;
 
                 const data = {
                     totalCases: totalCases,

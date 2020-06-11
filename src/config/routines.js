@@ -61,7 +61,5 @@ const update = () => {
     setInterval(updateTimeline, UPDATE_INTERVAL);
 }
 
+
 update();
-//updateStates();
-//mock();
-//remove("NaN/NaN/NaN")
