@@ -34,6 +34,8 @@
     "query-string": "^6.11.1",
     "readme-md-generator": "^1.0.0",
     "request": "^2.88.2",
+    "swagger": "^0.7.5",
+    "swagger-ui-express": "^4.1.4",
     "twit": "^2.2.11"
   }
 }
