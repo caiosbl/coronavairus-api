@@ -44,7 +44,7 @@
             "200": {
               "description": "OK",
               "schema": {
-                "$ref": "#/definitions/Brazil"
+                "$ref": "#/definitions/State"
               }
               
             }
@@ -70,7 +70,25 @@
         "200": {
           "description": "OK",
           "schema": {
-            "$ref": "#/definitions/Brazil"
+            "$ref": "#/definitions/State"
+          }
+          
+        }
+    }
+}
+},
+"/world": {
+    "get": {
+      "tags": [
+        "World"
+      ],
+      "summary": "Return World covid-19 stats",
+      
+      "responses": {
+        "200": {
+          "description": "OK",
+          "schema": {
+            "$ref": "#/definitions/World"
           }
           
         }
