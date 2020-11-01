@@ -32,7 +32,51 @@
                 }
             }
         }
+    },
+    "/state": {
+        "get": {
+          "tags": [
+            "State"
+          ],
+          "summary": "Return Brazil State covid stats",
+          
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/definitions/Brazil"
+              }
+              
+            }
+        }
     }
+},
+"/state/{uf}": {
+    "get": {
+      "tags": [
+        "State"
+      ],
+      "summary": "Return Brazil State covid stats",
+      "parameters": [
+        {
+          "name": "uf",
+          "in": "path",
+          "description": "UF - State code to be filtered",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "OK",
+          "schema": {
+            "$ref": "#/definitions/Brazil"
+          }
+          
+        }
+    }
+}
+}
 }
 
           
