@@ -16,8 +16,25 @@
       "application/json"
     ],
     "paths": {
-
+        "/brazil": {
+            "get": {
+              "tags": [
+                "Brazil"
+              ],
+              "summary": "Return Brazil covid timeseries",
+              
+              "responses": {
+                "200": {
+                  "description": "OK",
+                  "schema": {
+                    "$ref": "#/definitions/Brazil"
+                  }
+                }
+            }
+        }
     }
+}
 
-   
+          
+
   }
