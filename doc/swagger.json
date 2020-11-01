@@ -32,7 +32,25 @@
                 }
             }
         }
+    },
+    "/state": {
+        "get": {
+          "tags": [
+            "State"
+          ],
+          "summary": "Return Brazil State covid stats",
+          
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/definitions/Brazil"
+              }
+              
+            }
+        }
     }
+}
 }
 
           
