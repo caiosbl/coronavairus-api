@@ -109,6 +109,7 @@ exports.updateStates = async () => {
 
                     state.updateData(data);
                     state.markModified("data");
+                    state.markModified("latest");
 
                     await state.save(function (err, state) {
                         if (err) return console.error(err);
