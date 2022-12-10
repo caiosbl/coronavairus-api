@@ -22,7 +22,7 @@
     "csvtojson": "^2.0.10",
     "debug": "~2.6.9",
     "dotenv": "^8.2.0",
-    "express": "~4.16.1",
+    "express": "~4.17.3",
     "html2json": "^1.0.2",
     "http-errors": "~1.6.3",
     "json2csv": "^5.0.0",
